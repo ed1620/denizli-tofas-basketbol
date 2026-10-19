@@ -59,19 +59,22 @@ konsola 404 düşmez.
 
 ## Sayfalar ve menü
 
-Menü TOFAŞ sitesindeki gibi açılır menülerle: **Anasayfa · Kulüp ▾ · Takım ▾ · Medya ▾ · İletişim**,
-sağda TBF Denizli bağlantısı, WhatsApp ve **Ön Kayıt**.
+Header: logolar solda; menü (**Anasayfa · Kulüp ▾ · Takım ▾ · Medya ▾ · İletişim**) ve **Ön Kayıt**
+sağda. Footer'ın üstünde TBF Denizli İl Temsilciliği'ne giden federasyon bandı var. Her sayfa
+yüklenirken TOFAŞ × DİBA logolu kısa bir açılış ekranı görünür (en fazla 2,5 sn; JS çalışmazsa
+CSS 3,2 sn'de kaldırır).
 
 | Dosya | İçerik | Menü |
 | --- | --- | --- |
-| `index.html` | Slider + ön kayıt paneli, iki kulüp, son/yaklaşan maçlar, haberler, yaş grupları tablosu, galeri, konum | Anasayfa |
-| `kulup.html` | TOFAŞ Basketbol Okulları ve DİBA tanıtımı | Kulüp → Kulübümüz |
+| `index.html` | Slider + ön kayıt paneli, yaklaşan maçlar (sonuç gelince son maçlar), haberler, galeri, konum | Anasayfa |
+| `kulup.html` | Yalnız iki logo | Kulüp → Kulübümüz |
 | `vizyon-misyon.html` | Vizyon, misyon, değerler (**taslak**, kulüple onaylanacak) | Kulüp |
 | `antrenorler.html` / `antrenor.html?id=` | Teknik ekip; her antrenörün fotoğraf, biyografi ve sosyal medya profili | Kulüp |
 | `salonlar.html` | Antrenman ve maç salonları: adres, kapasite, harita, yol tarifi | Kulüp |
-| `takim.html?id=` | Kids, U10, U11, U12, U14, U16 A, U16 B: takım fotoğrafı, sıradaki maç, kayan oyuncu şeridi, kadro tablosu, maç takvimi, takımın haberleri | Takım |
+| `takim.html?id=` | Kids, U10, U11, U12, U14, U16 A, U16 B: en üstte takım fotoğrafı + alt menü (Genel Bakış · Kadro · Fikstür · Haberler · TBF), sıradaki maç (yoksa son maç), kayan oyuncu şeridi + "Oyuncuları listele", fikstür, haberler | Takım |
+| `kadro.html?id=` | Takımın kadro listesi (Sidearms tarzı satırlar), ad / doğum yılı / forma no sıralama | — |
 | `oyuncu.html?id=` | Sporcu profili: ad soyad, doğum yılı, takım, biyografi | — |
-| `fikstur.html` | Tüm yaş kategorilerinin lig ve hazırlık maçları, takım sekmeleri | Takım → Tüm Fikstür |
+| `fikstur.html` | Tüm takımların TBF lig maçları, ay ay; takım sekmeleri | Takım → Tüm Fikstür |
 | `mac.html?id=` | Maç detayı: skor tabelası, künye, salon + harita, sıradaki maçlar | — |
 | `galeri.html` / `videolar.html` / `haberler.html` | Fotoğraf albümü, videolar, haberler | Medya |
 | `kayit.html` | Ön kayıt formu (WhatsApp'a hazır mesaj) + SSS | Ön Kayıt |
@@ -84,9 +87,8 @@ sağda TBF Denizli bağlantısı, WhatsApp ve **Ön Kayıt**.
   **yalnız doğum yılı** tutulur, tam doğum tarihi tutulmaz. `photo`, `number`, `position`, `bio`
   alanları doldurulunca profilde görünür.
 - **`league`** — TBF fikstürü (Excel). Bizim taraf `{ team }`, rakip `{ name, logo }`; maçlarda
-  bizim logomuz her zaman **DİBA** logosu. Sonuç geldiğinde `score: "68-54"` yazmak yeterli:
+  bizim logomuz her zaman **DİBA** logosu. Hazırlık maçları sitede gösterilmez. Sonuç geldiğinde `score: "68-54"` yazmak yeterli:
   satır, maç detayı ve "Son Maçlar" kendiliğinden güncellenir.
-- **`matches`** — Instagram'daki hazırlık maçları; `teams` alanı yaş gruplarıdır.
 - **`posts[].groups`** — haberin hangi takım sayfalarında görüneceği.
 - Rakip logoları `assets/teams/` altında (TBF sitesinden). Logosu olmayan kulüpte baş harfler görünür.
 

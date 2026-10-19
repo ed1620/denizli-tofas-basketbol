@@ -252,12 +252,8 @@
     return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + DAYS[d.getDay()] + (m.time ? ' ' + m.time : '');
   }
 
-  /** Lig ve hazırlık maçlarını tek biçime getirir. Bizim taraf her zaman DİBA logosuyla. */
-  function normSide(x, teamIds) {
-    if (typeof x === 'string') {
-      var us = /tofa/i.test(x);
-      return us ? { us: true, name: 'DİBA', logo: DIBA_LOGO, team: null } : { name: x, logo: '' };
-    }
+  /** Lig maçını sayfa biçimine getirir. Bizim taraf her zaman DİBA logosuyla. */
+  function normSide(x) {
     if (x.team) {
       var t = teamById(x.team);
       return { us: true, name: 'DİBA ' + (t ? t.name : ''), logo: DIBA_LOGO, team: x.team };
@@ -267,36 +263,34 @@
   var MATCHES = null;
   function allMatches() {
     if (MATCHES) return MATCHES;
-    var lg = (S.league || []).map(function (m) {
+    MATCHES = (S.league || []).map(function (m) {
       var h = normSide(m.home), a = normSide(m.away);
       return {
-        id: m.id, kind: 'lig', no: m.no, comp: m.comp, week: m.week, date: m.date, time: m.time,
+        id: m.id, no: m.no, comp: m.comp, week: m.week, date: m.date, time: m.time,
         home: h, away: a, score: m.score || '', venue: m.venue,
-        teams: [h.team, a.team].filter(Boolean),
-        label: [h.team, a.team].filter(Boolean).map(function (id) { return teamById(id).name; }).join(' · ')
+        teams: [h.team, a.team].filter(Boolean)
       };
-    });
-    var hz = (S.matches || []).map(function (m) {
-      return {
-        id: m.id, kind: 'hazirlik', comp: 'Hazırlık Maçı', week: '', date: m.date, time: '',
-        home: normSide(m.home), away: normSide(m.away), score: '', venue: '', post: m.post,
-        groups: m.teams || [], label: m.groups
-      };
-    });
-    MATCHES = lg.concat(hz).sort(function (a, b) { return dateKey(a.date, a.time) - dateKey(b.date, b.time); });
+    }).sort(function (a, b) { return dateKey(a.date, a.time) - dateKey(b.date, b.time); });
     return MATCHES;
   }
   function matchById(id) { return allMatches().filter(function (m) { return m.id === id; })[0]; }
-  /** Bir takımın maçları: lig maçları takım kimliğiyle, hazırlık maçları yaş grubuyla eşleşir. */
-  function matchesOfTeam(t) {
-    return allMatches().filter(function (m) {
-      return m.kind === 'lig' ? m.teams.indexOf(t.id) > -1 : m.groups.indexOf(t.group) > -1;
-    });
-  }
-  function isPlayed(m) { return m.kind === 'hazirlik' || /\d/.test(m.score); }
+  function matchesOfTeam(t) { return allMatches().filter(function (m) { return m.teams.indexOf(t.id) > -1; }); }
+  function isPlayed(m) { return /\d/.test(m.score); }
   function upcoming(list) {
     var now = new Date();
     return list.filter(function (m) { return !isPlayed(m) && dateKey(m.date, m.time) >= now; });
+  }
+  /** Bir maçı belirli bir takımın gözünden okur: biz kimiz, rakip kim, iç saha mı. */
+  function perspective(m, teamId) {
+    var ourHome = m.home.us && (!teamId || m.home.team === teamId);
+    var us = ourHome ? m.home : m.away, opp = ourHome ? m.away : m.home;
+    var res = null;
+    if (isPlayed(m)) {
+      var n = m.score.split('-').map(function (x) { return parseInt(x, 10); });
+      var mine = ourHome ? n[0] : n[1], theirs = ourHome ? n[1] : n[0];
+      res = { mine: mine, theirs: theirs, win: mine > theirs };
+    }
+    return { us: us, opp: opp, home: ourHome, res: res };
   }
 
   function crest(side) {
@@ -304,48 +298,47 @@
     return '<span class="crest" aria-hidden="true">' + esc(initials(side.name)) + '</span>';
   }
 
-  /** Maç satırı — TOFAŞ fikstür satırı; tıklanınca maç detayına gider. */
-  function matchRow(m) {
-    var row = el('a', 'fx');
-    row.href = 'mac.html?id=' + m.id;
-    var mid = isPlayed(m) && m.kind === 'lig' ? esc(m.score.replace(/\s*-\s*/, '-'))
-      : m.kind === 'hazirlik' ? 'HAZIRLIK'
-      : (m.time || 'SAAT TBA');
-    var cls = m.kind === 'lig' && isPlayed(m) ? '' : ' pending';
-    row.innerHTML =
-      '<div><div class="fx__comp">' + esc(m.kind === 'lig' ? m.label + ' · ' + m.week : m.label) + '</div>' +
-      '<div class="fx__date">' + esc(fmtDate(m.date)) + '</div></div>' +
-      '<div class="fx__row">' +
-      '<div class="fx__team fx__team--a">' + crest(m.home) + '<b>' + esc(m.home.name) + '</b></div>' +
-      '<div class="fx__score' + cls + '">' + mid + '</div>' +
-      '<div class="fx__team">' + crest(m.away) + '<b>' + esc(m.away.name) + '</b></div>' +
+  var MON3 = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  var DAY3 = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+
+  /** Maç kartı — tarih bloğu, rakip, salon/saat, sonuç. Takım sayfasında o takımın gözünden okunur. */
+  function matchRow(m, teamId) {
+    var p = perspective(m, teamId);
+    var d = dateKey(m.date, m.time);
+    var v = venueById(m.venue);
+    var a = el('a', 'game' + (p.res ? ' game--played' : ''));
+    a.href = 'mac.html?id=' + m.id;
+    a.innerHTML =
+      '<div class="game__date"><b>' + d.getDate() + '</b><span>' + MON3[d.getMonth()] + '</span><small>' + DAY3[d.getDay()] + '</small></div>' +
+      '<div class="game__opp">' +
+        '<div class="game__crest">' + crest(p.opp) + '<i title="' + (p.home ? 'İç saha' : 'Deplasman') + '">' + (p.home ? 'vs' : '@') + '</i></div>' +
+        '<div class="game__info"><div class="game__meta"><span class="game__team">' + esc(p.us.name) + '</span>' + esc(m.week) + '</div>' +
+        '<div class="game__name">' + esc(p.opp.name) + '</div></div>' +
       '</div>' +
-      '<div class="fx__end"><div class="fx__venue">' + esc(m.kind === 'lig' ? m.comp : 'Hazırlık maçı') + '</div></div>';
-    return row;
+      '<div class="game__where"><b>' + esc(m.time || 'Saat TBA') + '</b><span>' + esc(v ? v.short : '') + '</span></div>' +
+      '<div class="game__end">' + (p.res
+        ? '<span class="game__res ' + (p.res.win ? 'is-win' : 'is-loss') + '">' + (p.res.win ? 'G' : 'M') + '</span><b class="game__score">' + p.res.mine + '–' + p.res.theirs + '</b>'
+        : '<span class="game__cta">Maç detayı ' + ARROW + '</span>') +
+      '</div>';
+    return a;
   }
 
-  /** Yaş grupları — TOFAŞ puan durumu tablosunun dili. */
-  function groupsTable(groups) {
-    var wrap = el('div', 'tablewrap');
-    var t = el('table', 'standings');
-    var call = 'Bilgi için arayın';
-    t.innerHTML =
-      '<thead><tr><th>Grup</th><th>Doğum Yılı</th><th>Yaş</th><th>Öne Çıkan</th><th>Antrenman</th><th>Ücret</th></tr></thead>';
-    var tb = el('tbody');
-    groups.forEach(function (g) {
-      var tr = el('tr');
-      tr.innerHTML =
-        '<td class="pts"><a href="takim.html?id=' + (teamsOfGroup(g.id)[0] || { id: g.id }).id + '">' + esc(g.name) + '</a></td>' +
-        '<td>' + esc(g.yearsLabel) + '</td>' +
-        '<td>' + esc(g.age) + '</td>' +
-        '<td class="team">' + esc(g.note) + '</td>' +
-        '<td class="muted">' + call + '</td>' +
-        '<td class="muted">' + call + '</td>';
-      tb.appendChild(tr);
-    });
-    t.appendChild(tb);
-    wrap.appendChild(t);
-    return wrap;
+  /** Öne çıkan maç kartı — sıradaki maç, yoksa son oynanan maç */
+  function featuredGame(host, m, label) {
+    if (!host) return;
+    if (!m) { host.remove(); return; }
+    var v = venueById(m.venue);
+    var played = isPlayed(m);
+    host.innerHTML =
+      '<div class="feature__top"><span class="feature__label">' + esc(label) + '</span><span class="feature__comp">' + esc(m.comp + ' · ' + m.week) + '</span></div>' +
+      '<div class="feature__row">' +
+        '<div class="feature__team">' + crest(m.home) + '<b>' + esc(m.home.name) + '</b></div>' +
+        '<div class="feature__mid">' + (played ? '<b class="feature__score">' + esc(m.score.replace(/\s*-\s*/, ' – ')) + '</b><span>Maç sonucu</span>'
+          : '<b class="feature__time">' + esc(m.time || 'TBA') + '</b><span>' + esc(fmtLong(m).split(' · ')[0]) + '</span>') + '</div>' +
+        '<div class="feature__team">' + crest(m.away) + '<b>' + esc(m.away.name) + '</b></div>' +
+      '</div>' +
+      '<div class="feature__foot"><span>' + esc(fmtLong(m)) + (v ? ' · ' + esc(v.short) : '') + '</span>' +
+        '<a class="btn btn--onblue btn--sm" href="mac.html?id=' + m.id + '">Maç detayı ' + ARROW + '</a></div>';
   }
 
   /* -------------------------------------------------------------- lightbox */
@@ -490,18 +483,19 @@
       sw.addEventListener('mouseleave', function () { if (fine()) rest(); });
     }
 
-    /* --- yaklaşan lig maçları / son oynanan maçlar */
+    /* --- maçlar: yaklaşanlar; sonuç varsa son sonuçlar da */
     var all = allMatches();
-    var rh = $('#results'), uh = $('#upcoming');
+    var uh = $('#upcoming'), rh = $('#results');
     if (uh) {
-      var up = upcoming(all).slice(0, 3);
-      if (!up.length) uh.appendChild(el('p', 'sec__sub', 'Yaklaşan maç bulunmuyor.'));
+      var up = upcoming(all).slice(0, 4);
+      if (!up.length) uh.appendChild(el('p', 'sec__sub', 'Takvimde yaklaşan maç yok.'));
       up.forEach(function (m) { uh.appendChild(matchRow(m)); });
-      markReveal(uh, '.fx');
+      markReveal(uh, '.game');
     }
+    var played = all.filter(isPlayed).reverse().slice(0, 4);
     if (rh) {
-      all.filter(isPlayed).reverse().slice(0, 3).forEach(function (m) { rh.appendChild(matchRow(m)); });
-      markReveal(rh, '.fx');
+      if (played.length) { played.forEach(function (m) { rh.appendChild(matchRow(m)); }); markReveal(rh, '.game'); }
+      else { var col = rh.closest('[data-col]'); if (col) col.remove(); }
     }
 
     /* --- kategoriye göre haberler (TOFAŞ'taki branş sekmeleri) */
@@ -519,10 +513,6 @@
       if (th) buildTabs(th, CATS.map(function (c) { return c[0]; }), renderCat);
       renderCat(0);
     }
-
-    /* --- yaş grupları tablosu */
-    var gh = $('#groups');
-    if (gh) gh.appendChild(groupsTable(S.groups || []));
 
     /* --- galeri önizleme */
     var gal = $('#galleryhome');
@@ -553,26 +543,6 @@
       '<div class="pcard__sub">' + esc(p.born + ' doğumlu') + (p.position ? ' · ' + esc(p.position) : '') + '</div></div>';
     return a;
   }
-  /** Kadro listesi — TOFAŞ tablo dili; satır sporcu profiline gider. */
-  function rosterTable(list) {
-    var wrap = el('div', 'tablewrap');
-    var t = el('table', 'standings roster-table');
-    t.innerHTML = '<thead><tr><th>#</th><th>Sporcu</th><th>Doğum yılı</th><th>Pozisyon</th><th></th></tr></thead>';
-    var tb = el('tbody');
-    list.forEach(function (p, i) {
-      var tr = el('tr');
-      tr.innerHTML =
-        '<td class="pos">' + esc(p.number || i + 1) + '</td>' +
-        '<td class="team"><a href="oyuncu.html?id=' + p.id + '">' + esc(personName(p.name)) + '</a></td>' +
-        '<td>' + esc(p.born) + '</td>' +
-        '<td class="muted">' + esc(p.position || '—') + '</td>' +
-        '<td><a class="link-more" href="oyuncu.html?id=' + p.id + '">Profil ' + ARROW + '</a></td>';
-      tb.appendChild(tr);
-    });
-    t.appendChild(tb);
-    wrap.appendChild(t);
-    return wrap;
-  }
   function playersOf(teamId) { return (S.players || []).filter(function (p) { return p.team === teamId; }); }
 
   /** Kayan oyuncu şeridi (ana sayfadan taşındı): liste ikiye katlanır, -50%'de kusursuz döner. */
@@ -583,63 +553,104 @@
     base.concat(base).forEach(function (p) { host.appendChild(playerCard(p)); });
   }
 
-  /** Sıradaki maç paneli — TOFAŞ "Sıradaki Maç" kutusu */
-  function nextMatchPanel(host, m) {
-    if (!host) return;
-    if (!m) { host.innerHTML = '<div class="nextmatch__label">Sıradaki Maç</div><div class="nextmatch__comp">Takvimde yaklaşan maç yok.</div>'; return; }
-    var v = venueById(m.venue);
-    host.innerHTML =
-      '<div class="nextmatch__label">Sıradaki Maç</div>' +
-      '<div class="nextmatch__comp">' + esc(m.comp + (m.week ? ' · ' + m.week : '')) + '</div>' +
-      '<div class="nextmatch__teams">' +
-      '<div class="nextmatch__team">' + crest(m.home) + '<b>' + esc(m.home.name) + '</b></div>' +
-      '<div class="nextmatch__vs">VS</div>' +
-      '<div class="nextmatch__team">' + crest(m.away) + '<b>' + esc(m.away.name) + '</b></div>' +
-      '</div>' +
-      '<div class="nextmatch__when">' + esc(fmtLong(m)) + '</div>' +
-      '<div class="nextmatch__where">' + esc(v ? v.name : '') + '</div>' +
-      '<a class="btn btn--onblue" href="mac.html?id=' + m.id + '">Maç detayı ' + ARROW + '</a>';
+  function teamFromQuery() {
+    return teamById(new URLSearchParams(location.search).get('id')) || (S.teams || [])[0];
+  }
+
+  /** Takım başlığı (takım ve kadro sayfaları ortak): fotoğraf, ad, alt menü */
+  function teamHeader(t, active) {
+    var g = (S.groups || []).filter(function (x) { return x.id === t.group; })[0] || {};
+    var photo = $('#tm-photo');
+    if (photo) {
+      if (t.photo) photo.insertAdjacentHTML('afterbegin', '<img src="' + esc(t.photo) + '" alt="' + esc(t.full + ' takım fotoğrafı') + '">');
+      else photo.insertAdjacentHTML('beforeend', '<span class="team-photo__note">Takım fotoğrafı yakında</span>');
+    }
+    $$('[data-tm="name"]').forEach(function (n) { n.textContent = t.full; });
+    $$('[data-tm="short"]').forEach(function (n) { n.textContent = t.name; });
+    var lead = $('#tm-lead');
+    if (lead) lead.textContent = [g.yearsLabel, t.league || 'Lig maçı yok'].filter(Boolean).join(' · ');
+    var nav = $('#tm-nav');
+    if (nav) {
+      var items = [['Genel Bakış', 'takim.html?id=' + t.id, 'genel'], ['Kadro', 'kadro.html?id=' + t.id, 'kadro'],
+        ['Fikstür', 'takim.html?id=' + t.id + '#fikstur', 'fikstur'], ['Haberler', 'takim.html?id=' + t.id + '#haberler', 'haberler']];
+      if (t.tbf) items.push(['TBF', t.tbf, 'tbf']);
+      nav.innerHTML = items.map(function (i) {
+        var ext = i[2] === 'tbf' ? ' target="_blank" rel="noopener"' : '';
+        return '<a href="' + i[1] + '"' + ext + (i[2] === active ? ' aria-current="page"' : '') + '>' + i[0] + '</a>';
+      }).join('');
+    }
   }
 
   /* ------------------------------------------------------------ page: team */
 
   function pageTeam() {
-    var t = teamById(new URLSearchParams(location.search).get('id')) || (S.teams || [])[0];
+    var t = teamFromQuery();
     if (!t) return;
-    var g = (S.groups || []).filter(function (x) { return x.id === t.group; })[0] || {};
     document.title = t.full + ' — TOFAŞ × DİBA Denizli';
-    $('#tm-crumb').textContent = t.name;
-    $('#tm-name').textContent = t.full;
-    $('#tm-lead').textContent = [g.yearsLabel, g.age, t.league].filter(Boolean).join(' · ');
-    var tbf = $('#tm-tbf');
-    if (t.tbf) tbf.href = t.tbf; else tbf.remove();
-
-    var media = $('#tm-photo');
-    if (t.photo) media.innerHTML = '<img src="' + esc(t.photo) + '" alt="' + esc(t.full + ' takım fotoğrafı') + '">';
-    else media.insertAdjacentHTML('beforeend', '<span class="team-photo__note">Takım fotoğrafı yakında</span>');
+    teamHeader(t, 'genel');
 
     var ms = matchesOfTeam(t);
-    nextMatchPanel($('#tm-next'), upcoming(ms)[0]);
-
-    var fx = $('#tm-fixtures');
-    if (ms.length) { ms.forEach(function (m) { fx.appendChild(matchRow(m)); }); markReveal(fx, '.fx'); }
-    else fx.appendChild(el('p', 'sec__sub', 'Bu grup için henüz maç takvimi yok.'));
+    var next = upcoming(ms)[0];
+    var last = ms.filter(isPlayed).slice(-1)[0];
+    featuredGame($('#tm-feature'), next || last, next ? 'Sıradaki Maç' : 'Son Maç');
 
     var roster = playersOf(t.id);
-    var grid = $('#tm-roster');
+    $('#tm-roster-link').href = 'kadro.html?id=' + t.id;
     if (roster.length) {
       rosterStrip($('#rostertrack'), roster);
-      grid.appendChild(rosterTable(roster));
-      $('#tm-count').textContent = roster.length + ' sporcu · kaynak: TBF lisans listesi';
+      $('#tm-count').textContent = roster.length + ' sporcu';
     } else {
       $('#tm-strip').remove();
-      grid.outerHTML = '<p class="sec__sub">Kadro bilgisi yakında eklenecek.</p>';
+      $('#tm-roster-link').remove();
+      $('#tm-count').textContent = 'Kadro bilgisi yakında eklenecek.';
     }
+
+    var fx = $('#tm-fixtures');
+    if (ms.length) { ms.forEach(function (m) { fx.appendChild(matchRow(m, t.id)); }); markReveal(fx, '.game'); }
+    else fx.appendChild(el('p', 'sec__sub', 'Bu yaş grubunun TBF liginde maçı yok.'));
 
     var news = $('#tm-news');
     var posts = sortedPosts().filter(function (p) { return (p.groups || []).indexOf(t.group) > -1; });
     if (posts.length) { posts.slice(0, 4).forEach(function (p) { news.appendChild(newsCard(p)); }); markReveal(news, '.card'); }
     else news.outerHTML = '<p class="sec__sub">Bu takıma ait haber henüz yok.</p>';
+  }
+
+  /* ---------------------------------------------------------- page: roster */
+
+  /** Kadro sayfası — Sidearms tarzı satırlar: numara rozeti, büyük ad, künye */
+  function pageRoster() {
+    var t = teamFromQuery();
+    if (!t) return;
+    document.title = t.full + ' Kadrosu — TOFAŞ × DİBA Denizli';
+    teamHeader(t, 'kadro');
+    var host = $('#rs-list');
+    var list = playersOf(t.id);
+    if (!list.length) { host.outerHTML = '<p class="sec__sub">Kadro bilgisi yakında eklenecek.</p>'; $('#rs-tools').remove(); return; }
+    var sorts = {
+      ad: function (a, b) { return a.name.localeCompare(b.name, 'tr'); },
+      yil: function (a, b) { return a.born - b.born || a.name.localeCompare(b.name, 'tr'); },
+      no: function (a, b) { return (+a.number || 999) - (+b.number || 999) || a.name.localeCompare(b.name, 'tr'); }
+    };
+    function render(key) {
+      host.innerHTML = '';
+      list.slice().sort(sorts[key]).forEach(function (p, i) {
+        var a = el('a', 'rrow');
+        a.href = 'oyuncu.html?id=' + p.id;
+        a.innerHTML =
+          '<div class="rrow__photo">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="" loading="lazy">' : '<span>' + esc(initials(p.name)) + '</span>') + '</div>' +
+          '<div class="rrow__main"><div class="rrow__meta">' + esc([p.position, p.born + ' doğumlu'].filter(Boolean).join(' / ')) + '</div>' +
+          '<div class="rrow__name">' + (p.number ? '<span class="rrow__no">' + esc(p.number) + '</span>' : '') + esc(personName(p.name)) + '</div></div>' +
+          '<div class="rrow__side"><b>' + esc(t.name) + '</b><span>' + esc(t.league || '') + '</span></div>' +
+          '<div class="rrow__go">Profil ' + ARROW + '</div>';
+        host.appendChild(a);
+      });
+      markReveal(host, '.rrow');
+      reveal();
+    }
+    var sel = $('#rs-sort');
+    sel.addEventListener('change', function () { render(sel.value); });
+    $('#rs-count').textContent = list.length + ' sporcu · TBF lisans listesi';
+    render('ad');
   }
 
   /* ---------------------------------------------------------- page: player */
@@ -650,7 +661,7 @@
     var t = teamById(p.team);
     document.title = personName(p.name) + ' — TOFAŞ × DİBA Denizli';
     $('#pl-crumb').textContent = personName(p.name);
-    var tl = $('#pl-team-link'); tl.textContent = t.full; tl.href = 'takim.html?id=' + t.id;
+    var tl = $('#pl-team-link'); tl.textContent = t.full; tl.href = 'kadro.html?id=' + t.id;
     $('#pl-name').textContent = personName(p.name);
     $('#pl-pos').textContent = t.full + (p.position ? ' · ' + p.position : '');
     var media = $('#pl-media');
@@ -668,7 +679,7 @@
     var others = $('#pl-others');
     playersOf(t.id).filter(function (x) { return x.id !== p.id; }).slice(0, 6).forEach(function (x) { others.appendChild(playerCard(x)); });
     markReveal(others, '.pcard');
-    $('#pl-all').href = 'takim.html?id=' + t.id;
+    $('#pl-all').href = 'kadro.html?id=' + t.id;
   }
 
   /* ----------------------------------------------------------- page: match */
@@ -678,31 +689,25 @@
     if (!m) return;
     document.title = m.home.name + ' - ' + m.away.name + ' — TOFAŞ × DİBA Denizli';
     $('#mc-crumb').textContent = m.home.name + ' - ' + m.away.name;
-    $('#mc-comp').textContent = m.comp + (m.week ? ' · ' + m.week : '');
+    $('#mc-comp').textContent = m.comp + ' · ' + m.week;
     $('#mc-home').innerHTML = crest(m.home) + '<b>' + esc(m.home.name) + '</b>';
     $('#mc-away').innerHTML = crest(m.away) + '<b>' + esc(m.away.name) + '</b>';
-    var played = m.kind === 'lig' && isPlayed(m);
+    var played = isPlayed(m);
     $('#mc-score').innerHTML = played ? esc(m.score) : '<span>' + esc(m.time || 'VS') + '</span>';
     $('#mc-when').textContent = fmtLong(m);
-    $('#mc-status').textContent = m.kind === 'hazirlik' ? 'Hazırlık maçı · skor paylaşılmadı' : played ? 'Maç sonucu' : 'Maç henüz oynanmadı';
+    $('#mc-status').textContent = played ? 'Maç sonucu' : 'Maç henüz oynanmadı';
 
-    var info = $('#mc-info');
     var v = venueById(m.venue);
-    var rows = [['Tarih', fmtLong(m)], ['Organizasyon', m.comp]];
-    if (m.week) rows.push(['Hafta', m.week]);
-    if (m.no) rows.push(['Maç no', m.no]);
+    var rows = [['Tarih', fmtLong(m)], ['Organizasyon', m.comp], ['Hafta', m.week], ['Maç no', m.no]];
     if (v) rows.push(['Salon', v.name]);
-    info.innerHTML = rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('');
+    $('#mc-info').innerHTML = rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('');
 
-    var teamLinks = $('#mc-teams');
-    var ids = m.kind === 'lig' ? m.teams : [];
-    if (m.kind === 'hazirlik') m.groups.forEach(function (g) { teamsOfGroup(g).forEach(function (t) { ids.push(t.id); }); });
-    ids.filter(function (x, i) { return ids.indexOf(x) === i; }).forEach(function (id) {
+    var links = $('#mc-teams');
+    m.teams.filter(function (x, i) { return m.teams.indexOf(x) === i; }).forEach(function (id) {
       var t = teamById(id);
-      if (t) teamLinks.insertAdjacentHTML('beforeend', '<a class="btn btn--outline btn--sm" href="takim.html?id=' + t.id + '">' + esc(t.full) + '</a>');
+      if (t) links.insertAdjacentHTML('beforeend', '<a class="btn btn--outline btn--sm" href="takim.html?id=' + t.id + '">' + esc(t.full) + '</a>');
     });
-    if (m.kind === 'lig') teamLinks.insertAdjacentHTML('beforeend', '<a class="btn btn--outline btn--sm" href="https://tbf.org.tr/denizli" target="_blank" rel="noopener">TBF Denizli</a>');
-    if (m.post) teamLinks.insertAdjacentHTML('beforeend', '<a class="btn btn--primary btn--sm" href="' + postUrl(m.post) + '" target="_blank" rel="noopener">Instagram gönderisi</a>');
+    links.insertAdjacentHTML('beforeend', '<a class="btn btn--outline btn--sm" href="https://tbf.org.tr/denizli" target="_blank" rel="noopener">TBF Denizli</a>');
 
     var vb = $('#mc-venue');
     if (v) {
@@ -713,12 +718,11 @@
     } else { vb.remove(); $('#mc-map').remove(); }
 
     var rel = $('#mc-related');
-    var sameTeam = allMatches().filter(function (x) {
-      return x.id !== m.id && x.kind === m.kind && (m.kind === 'lig' ? x.teams.some(function (t) { return m.teams.indexOf(t) > -1; }) : true);
-    });
-    var after = sameTeam.filter(function (x) { return dateKey(x.date, x.time) >= dateKey(m.date, m.time); }).slice(0, 3);
-    (after.length ? after : sameTeam.slice(-3)).forEach(function (x) { rel.appendChild(matchRow(x)); });
-    markReveal(rel, '.fx');
+    var own = m.teams[0];
+    var same = allMatches().filter(function (x) { return x.id !== m.id && x.teams.indexOf(own) > -1; });
+    var after = same.filter(function (x) { return dateKey(x.date, x.time) >= dateKey(m.date, m.time); }).slice(0, 3);
+    (after.length ? after : same.slice(-3)).forEach(function (x) { rel.appendChild(matchRow(x, own)); });
+    markReveal(rel, '.game');
   }
 
   /* -------------------------------------------------------- page: fixtures */
@@ -727,20 +731,17 @@
     var host = $('#fixtures');
     if (!host) return;
     var all = allMatches();
-    var tabs = [['Tümü', function () { return true; }]];
-    (S.teams || []).filter(function (t) { return t.league; }).forEach(function (t) {
-      tabs.push([t.name, function (m) { return m.kind === 'lig' && m.teams.indexOf(t.id) > -1; }]);
-    });
-    tabs.push(['Hazırlık', function (m) { return m.kind === 'hazirlik'; }]);
+    var tabs = [['Tümü', null]];
+    (S.teams || []).filter(function (t) { return t.league; }).forEach(function (t) { tabs.push([t.name, t.id]); });
     function render(i) {
       host.innerHTML = '';
-      var month = '';
-      all.filter(tabs[i][1]).forEach(function (m) {
+      var month = '', id = tabs[i][1];
+      all.filter(function (m) { return !id || m.teams.indexOf(id) > -1; }).forEach(function (m) {
         var d = dateKey(m.date, m.time), key = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
         if (key !== month) { month = key; host.appendChild(el('h3', 'fx-month', esc(key))); }
-        host.appendChild(matchRow(m));
+        host.appendChild(matchRow(m, id));
       });
-      markReveal(host, '.fx');
+      markReveal(host, '.game');
       reveal();
     }
     var t = $('#fixturetabs');
@@ -749,8 +750,8 @@
 
     var sum = $('#fxsummary');
     if (sum) {
-      var lg = all.filter(function (m) { return m.kind === 'lig'; });
-      [['Lig maçı', lg.length], ['Oynanan', lg.filter(isPlayed).length], ['Kalan', lg.filter(function (m) { return !isPlayed(m); }).length], ['Hazırlık maçı', all.length - lg.length]]
+      var played = all.filter(isPlayed).length;
+      [['Lig maçı', all.length], ['Oynanan', played], ['Kalan', all.length - played], ['Takım', tabs.length - 1]]
         .forEach(function (x) { sum.appendChild(el('div', 'stat', '<b>' + x[1] + '</b><span>' + x[0] + '</span>')); });
       markReveal(sum, '.stat');
     }
@@ -983,12 +984,31 @@
 
   /* ----------------------------------------------------------------- boot */
 
+  /** Açılış ekranı: TOFAŞ × DİBA logoları sayfa yüklenene kadar görünür, sonra solar.
+   *  JS çalışmazsa CSS'teki zaman aşımı ekranı yine kaldırır. */
+  function loader() {
+    var l = $('.loader');
+    if (!l) return;
+    var shown = Date.now();
+    function hide() {
+      var wait = Math.max(0, 450 - (Date.now() - shown));
+      setTimeout(function () {
+        l.classList.add('is-done');
+        setTimeout(function () { l.remove(); }, 400);
+      }, reduce ? 0 : wait);
+    }
+    if (document.readyState === 'complete') hide();
+    else window.addEventListener('load', hide);
+    setTimeout(hide, 2500);   // yavaş bağlantıda harita/görsel beklenmez
+  }
+
   function boot() {
+    loader();
     header();
     var page = document.body.getAttribute('data-page');
     try {
       ({
-        home: pageHome, team: pageTeam, player: pagePlayer, match: pageMatch, fixtures: pageFixtures,
+        home: pageHome, team: pageTeam, roster: pageRoster, player: pagePlayer, match: pageMatch, fixtures: pageFixtures,
         coaches: pageCoaches, coach: pageCoach, gallery: pageGallery, videos: pageVideos,
         news: pageNews, register: pageRegister
       }[page] || function () {})();

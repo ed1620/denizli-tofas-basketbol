@@ -91,17 +91,7 @@ window.SITE = {
   /* Ana sayfa slider'ı — gönderi kodları */
   slider: ['DeAFdPFiHqC', 'DdCqJ6cjWk5', 'Db-hQRmt1n0', 'DdMyVmNN4W2', 'DeWwV1-jeWa'],
 
-  /* Hazırlık maçları — gönderilerden. Skor paylaşılmadığı için gösterilmiyor.
-     home: ev sahibi (11.10'da Denizli Basket'in misafiriydik, 08.09'da Logos'u biz ağırladık) */
-  matches: [
-    { id: 'h1', type: 'hazirlik', teams: ['u10','u11'], date: '11.10.2026', groups: 'U10 · U11', home: 'Denizli Basket S.K.', away: 'Denizli Tofaş', post: 'DeWwV1-jeWa' },
-    { id: 'h2', type: 'hazirlik', teams: ['u10'], date: '11.09.2026', groups: 'U10', home: 'Denizli Tofaş', away: 'Logos Akademi Basketbol', post: 'DdJsbaptWT9' },
-    { id: 'h3', type: 'hazirlik', teams: ['u12'], date: '09.09.2026', groups: 'U12', home: 'Denizli Tofaş', away: 'Denizli Basket', post: 'DdFP_n5tVEz' },
-    { id: 'h4', type: 'hazirlik', teams: ['u12'], date: '09.09.2026', groups: 'U12', home: 'Denizli Tofaş', away: 'Saygın Basketbol S.K.', post: 'DdEFY7rt9Mb' },
-    { id: 'h5', type: 'hazirlik', teams: ['u16','u14','u11','u10'], date: '08.09.2026', groups: 'U16 · U14 · U11 · U10', home: 'Denizli Tofaş', away: 'Logos Basketbol', post: 'DdCqJ6cjWk5' }
-  ],
-
-  /* Takımlar — group: haber/hazırlık maçı eşlemesi için yaş grubu kimliği.
+  /* Takımlar — group: haberleri takım sayfalarına bağlayan yaş grubu kimliği.
      Kadrolar TBF Denizli sayfasından (19.10.2026); oyuncular için yalnız doğum yılı tutulur. */
   teams: [
     {
@@ -507,6 +497,7 @@ window.SITE = {
     {
       "id": "erbakir",
       "name": "Erbakır Fen Lisesi Spor Salonu",
+      "short": "Erbakır Fen Lisesi",
       "use": "Antrenman salonu",
       "address": "Şemikler Mah. 3121 Sk. No: 24A, Merkezefendi / Denizli",
       "lat": 37.80414,
@@ -519,6 +510,7 @@ window.SITE = {
     {
       "id": "engelsiz",
       "name": "Denizli Büyükşehir Belediyesi Engelsiz Yaşam Merkezi Spor Salonu",
+      "short": "Engelsiz Yaşam Merkezi",
       "use": "Lig maçları (TBF Denizli U14 ve U16 Erkekler)",
       "address": "Servergazi Mah. 409 Sk., Merkezefendi / Denizli",
       "lat": null,
@@ -1072,7 +1064,7 @@ window.SITE = {
     { q: 'Haftada kaç gün antrenman var?',
       a: 'Yaz döneminde haftada 4 antrenman yapılıyor. Sezon içi program ve grup saatleri için bizi arayın.', tbd: true },
     { q: 'Maçlara çıkıyor muyuz?',
-      a: 'Evet; Denizli kulüpleriyle (Denizli Basket, Logos Basketbol, Saygın Basketbol…) düzenli hazırlık ve dostluk maçları oynuyoruz.' },
+      a: 'Evet. DİBA adıyla TBF Denizli U14 ve U16 Erkekler liglerinde U14, U16 A ve U16 B takımlarımızla oynuyoruz; maç takvimi Tüm Fikstür sayfasında.' },
     { q: 'Ücret ne kadar?',
       a: 'Ücret ve kayıt bilgisi için 0 (540) 244 19 74 numarasını arayabilir ya da WhatsApp’tan yazabilirsiniz.' },
     { q: 'Deneme antrenmanı var mı?',
