@@ -8,6 +8,8 @@ haber kartları, kadro şeridi, tablo, lacivert galeri bandı ve footer. Değiş
 taraf içerik: A takım modülleri (fikstür, puan durumu, bilet, lig logoları)
 spor okulunun karşılıklarıyla değiştirildi.
 
+**Canlı site:** https://ed1620.github.io/denizli-tofas-basketbol/ (GitHub Pages, `main` dalının kökünden; her push'ta birkaç dakika içinde güncellenir)
+
 İçerik `ICERIK.md`'den gelir (kulübün Instagram hesabı ve açık kaynaklar).
 Orada olmayan bilgi (ücret, saat, biyografi…) uydurulmadı; sitede
 "Bilgi için arayın" yazar, liste `YAPILACAKLAR.md`'de. Build adımı yok.

@@ -22,5 +22,6 @@
 - [ ] Açık adres: posta kodu (20010) ve salon girişi
 
 ## Yayın
-- [ ] Alan adı (ör. denizlitofasbasket.com) ve yayınlama yeri
+- [x] Yayın: GitHub Pages → https://ed1620.github.io/denizli-tofas-basketbol/
+- [ ] Alan adı (ör. denizlitofasbasket.com) alınacaksa GitHub Pages'e bağlanmalı; o zaman sayfalardaki `og:image` ve JSON-LD adresleri de yeni alan adıyla güncellenmeli
 - [ ] Ön kayıt formu ileride Supabase'e bağlanabilir (`~/Desktop/DİBA` projesi aynı kulübün mobil uygulaması, Supabase kullanıyor) — şimdilik form WhatsApp mesajı açıyor
