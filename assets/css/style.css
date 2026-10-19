@@ -1069,6 +1069,13 @@ table.roster-table td.team a { color: var(--navy); }
    Çeki düzen — header hizası, maç kartı, takım sayfası, kadro, TBF bandı, açılış
    ========================================================================== */
 
+/* Ana sayfa hero: ön kayıt paneli kalktı, slider tam genişlik */
+.hero--full .hero__grid { grid-template-columns: 1fr; }
+.hero--full .slider__track { aspect-ratio: 21 / 9; }
+.hero--full .slide__title { font-size: clamp(22px, 3vw, 38px); }
+@media (max-width: 900px) { .hero--full .slider__track { aspect-ratio: 16 / 9; } }
+@media (max-width: 620px) { .hero--full .slider__track { aspect-ratio: 4 / 5; } }
+
 /* Header: logolar solda, menü ve Ön Kayıt sağda */
 .hdr .nav { margin-left: auto; }
 .hdr__end { margin-left: 14px; }
@@ -1077,11 +1084,11 @@ table.roster-table td.team a { color: var(--navy); }
 .loader {
   position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; background: #fff;
   transition: opacity 320ms var(--ease-out), visibility 0s linear 320ms;
-  animation: loaderFailsafe 0s linear 3.2s forwards;   /* JS çalışmazsa */
+  animation: loaderFailsafe 0s linear 4.5s forwards;   /* JS çalışmazsa */
 }
-.loader__in { display: flex; align-items: center; gap: 18px; animation: loaderIn 520ms var(--ease-out) both; }
-.loader__in img:first-child { height: 64px; width: auto; }
-.loader__in img:last-child { height: 84px; width: auto; }
+.loader__in { display: flex; align-items: center; gap: 18px; animation: loaderIn 600ms var(--ease-out) both; }
+.loader__in img:first-child { height: 84px; width: auto; }
+.loader__in img:last-child { height: 112px; width: auto; }
 .loader__in span { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--ink-3); }
 .loader__bar { position: absolute; left: 50%; bottom: 38%; width: 120px; height: 3px; margin-left: -60px; border-radius: 3px; background: var(--line); overflow: hidden; }
 .loader__bar::after { content: ""; position: absolute; inset: 0; background: var(--green-bright); transform-origin: left; animation: loaderBar 1.1s var(--ease-in-out) infinite; }

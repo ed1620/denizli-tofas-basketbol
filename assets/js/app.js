@@ -989,9 +989,11 @@
   function loader() {
     var l = $('.loader');
     if (!l) return;
-    var shown = Date.now();
+    var shown = Date.now(), done = false;
     function hide() {
-      var wait = Math.max(0, 450 - (Date.now() - shown));
+      if (done) return;
+      done = true;
+      var wait = Math.max(0, 1600 - (Date.now() - shown));   // logolar tam görünsün
       setTimeout(function () {
         l.classList.add('is-done');
         setTimeout(function () { l.remove(); }, 400);
@@ -999,7 +1001,7 @@
     }
     if (document.readyState === 'complete') hide();
     else window.addEventListener('load', hide);
-    setTimeout(hide, 2500);   // yavaş bağlantıda harita/görsel beklenmez
+    setTimeout(hide, 3500);   // yavaş bağlantıda harita/görsel beklenmez
   }
 
   function boot() {

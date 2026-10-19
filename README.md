@@ -61,12 +61,12 @@ konsola 404 düşmez.
 
 Header: logolar solda; menü (**Anasayfa · Kulüp ▾ · Takım ▾ · Medya ▾ · İletişim**) ve **Ön Kayıt**
 sağda. Footer'ın üstünde TBF Denizli İl Temsilciliği'ne giden federasyon bandı var. Her sayfa
-yüklenirken TOFAŞ × DİBA logolu kısa bir açılış ekranı görünür (en fazla 2,5 sn; JS çalışmazsa
-CSS 3,2 sn'de kaldırır).
+yüklenirken TOFAŞ × DİBA logolu açılış ekranı en az 1,6 sn görünür (en fazla 3,5 sn; JS çalışmazsa
+CSS 4,5 sn'de kaldırır).
 
 | Dosya | İçerik | Menü |
 | --- | --- | --- |
-| `index.html` | Slider + ön kayıt paneli, yaklaşan maçlar (sonuç gelince son maçlar), haberler, galeri, konum | Anasayfa |
+| `index.html` | Tam genişlik slider, yaklaşan maçlar (sonuç gelince son maçlar), haberler, galeri, konum | Anasayfa |
 | `kulup.html` | Yalnız iki logo | Kulüp → Kulübümüz |
 | `vizyon-misyon.html` | Vizyon, misyon, değerler (**taslak**, kulüple onaylanacak) | Kulüp |
 | `antrenorler.html` / `antrenor.html?id=` | Teknik ekip; her antrenörün fotoğraf, biyografi ve sosyal medya profili | Kulüp |
