@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "denizli-tofas", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "8913"], "port": 8913 },
+    { "name": "tofas-referans", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "8912", "--directory", "/Users/erendogan20/Desktop/TOFAŞ"], "port": 8912 }
+  ]
+}
