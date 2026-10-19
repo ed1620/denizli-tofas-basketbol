@@ -57,21 +57,38 @@ python3 tools/photos.py && python3 tools/stamp.py
 yükler; olmayanlar için lacivert zemin + soluk rozet yer tutucusu görünür,
 konsola 404 düşmez.
 
-## Sayfalar
+## Sayfalar ve menü
 
-| Dosya | İçerik | TOFAŞ karşılığı |
+Menü TOFAŞ sitesindeki gibi açılır menülerle: **Anasayfa · Kulüp ▾ · Takım ▾ · Medya ▾ · İletişim**,
+sağda TBF Denizli bağlantısı, WhatsApp ve **Ön Kayıt**.
+
+| Dosya | İçerik | Menü |
 | --- | --- | --- |
-| `index.html` | Gönderilerden 5'li slider + ön kayıt paneli, hazırlık maçları, sekmeli haberler, antrenör şeridi, yaş grupları tablosu, galeri + sayılar, konum ve harita | Ana sayfa (slider + sıradaki maç, son/yaklaşan maçlar, haberler, kadro şeridi, puan durumu, albümler) |
-| `kulupler.html` | İki kulübün tanıtımı; DİBA bölümü (lig/takım bilgisi gelince doldurulacak) | Kulüp |
-| `programlar.html` | Yaş grupları tablosu, grup kartları, antrenman yaklaşımı, yaz okulu | Puan durumu tablosu + branşlar + kulüp metin blokları |
-| `antrenorler.html` | İki baş antrenör vitrini + teknik ekip kartları (fotoğraf yoksa baş harf) | Teknik kadro |
-| `galeri.html` | Instagram fotoğrafları, klavyeyle gezilen lightbox | Galeri |
-| `haberler.html` | Instagram gönderileri, kategori sekmeleri; kartlar gönderiye gider | Haberler |
-| `kayit.html` | Ön kayıt formu (WhatsApp'a hazır mesaj) + SSS | — |
-| `iletisim.html` | Adres, telefon/WhatsApp, sosyal medya, Google Haritası, yol tarifi | İletişim |
+| `index.html` | Slider + ön kayıt paneli, iki kulüp, son/yaklaşan maçlar, haberler, yaş grupları tablosu, galeri, konum | Anasayfa |
+| `kulup.html` | TOFAŞ Basketbol Okulları ve DİBA tanıtımı | Kulüp → Kulübümüz |
+| `vizyon-misyon.html` | Vizyon, misyon, değerler (**taslak**, kulüple onaylanacak) | Kulüp |
+| `antrenorler.html` / `antrenor.html?id=` | Teknik ekip; her antrenörün fotoğraf, biyografi ve sosyal medya profili | Kulüp |
+| `salonlar.html` | Antrenman ve maç salonları: adres, kapasite, harita, yol tarifi | Kulüp |
+| `takim.html?id=` | Kids, U10, U11, U12, U14, U16 A, U16 B: takım fotoğrafı, sıradaki maç, kayan oyuncu şeridi, kadro tablosu, maç takvimi, takımın haberleri | Takım |
+| `oyuncu.html?id=` | Sporcu profili: ad soyad, doğum yılı, takım, biyografi | — |
+| `fikstur.html` | Tüm yaş kategorilerinin lig ve hazırlık maçları, takım sekmeleri | Takım → Tüm Fikstür |
+| `mac.html?id=` | Maç detayı: skor tabelası, künye, salon + harita, sıradaki maçlar | — |
+| `galeri.html` / `videolar.html` / `haberler.html` | Fotoğraf albümü, videolar, haberler | Medya |
+| `kayit.html` | Ön kayıt formu (WhatsApp'a hazır mesaj) + SSS | Ön Kayıt |
+| `iletisim.html` | Adres, telefon/WhatsApp, sosyal medya, harita | İletişim |
 
-Her sayfada iki ana eylem: header'da **Ön Kayıt** ve **WhatsApp'tan Yaz**;
-mobilde ekranın altında sabit `Ara · WhatsApp · Ön Kayıt` çubuğu.
+## Takım, oyuncu ve maç verisi (`data/site.js`)
+
+- **`teams`** — `group` alanı haber ve hazırlık maçlarını yaş grubuna bağlar (`u16` → U16 A ve U16 B).
+- **`players`** — TBF Denizli lisans listesinden (19.10.2026). Çocuk sporcular olduğu için
+  **yalnız doğum yılı** tutulur, tam doğum tarihi tutulmaz. `photo`, `number`, `position`, `bio`
+  alanları doldurulunca profilde görünür.
+- **`league`** — TBF fikstürü (Excel). Bizim taraf `{ team }`, rakip `{ name, logo }`; maçlarda
+  bizim logomuz her zaman **DİBA** logosu. Sonuç geldiğinde `score: "68-54"` yazmak yeterli:
+  satır, maç detayı ve "Son Maçlar" kendiliğinden güncellenir.
+- **`matches`** — Instagram'daki hazırlık maçları; `teams` alanı yaş gruplarıdır.
+- **`posts[].groups`** — haberin hangi takım sayfalarında görüneceği.
+- Rakip logoları `assets/teams/` altında (TBF sitesinden). Logosu olmayan kulüpte baş harfler görünür.
 
 ## Logolar ve font
 
@@ -115,7 +132,9 @@ assets/css/style.css   TOFAŞ tasarım sistemi (birebir) + sonda "Denizli ekleri
 assets/js/app.js       header, scroll-reveal, slider, sekmeler, lightbox, render, form
 data/site.js           içerik (window.SITE): okul, gruplar, antrenörler, gönderiler, maçlar, SSS
 data/photos.js         mevcut Instagram fotoğrafları (tools/photos.py üretir)
-assets/img/            logo, favicon (180 px), paylaşım görseli
+assets/img/            logolar, TBF logosu, favicon, paylaşım görseli
+assets/teams/          rakip kulüp logoları (TBF)
+assets/fonts/          Fiat Typeface
 assets/instagram/      Instagram fotoğrafları (+ 600/ küçük resimler)
 tools/stamp.py         CSS/JS bağlantılarına sürüm damgası basar (TOFAŞ'tan)
 tools/photos.py        fotoğrafları küçültür, listeyi yazar

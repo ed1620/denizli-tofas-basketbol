@@ -1,7 +1,20 @@
 # Yapılacaklar / Kulüpten istenecek bilgiler
 
-## DİBA (kullanıcı paylaşacak)
-- [ ] DİBA'nın oynadığı lig, takımlar / yaş kategorileri, maç programı ve sonuçlar → `kulupler.html#diba` şu an "yakında" yer tutucusu gösteriyor
+## Takımlar, sporcular, maçlar
+- [x] U14 ve U16 (A/B) fikstürü ve kadroları eklendi (TBF Denizli, 19.10.2026)
+- [ ] **U16 B kadrosu** TBF'de yalnız 1 sporcu görünüyor (Aras Köknar) — lisanslar tamamlanınca güncelle
+- [ ] Kids, U10, U11, U12 kadroları ve maç programları (TBF'de bu kategorilerde lig yok)
+- [ ] Sporcu bilgilerinin sitede yayını için **veli onayı (KVKK)** — şu an ad soyad + doğum yılı yayında; fotoğraf eklemeden önce mutlaka yazılı onay alın
+- [ ] Sporcu forma numaraları, pozisyonlar, fotoğraflar, kısa biyografiler (`data/site.js` → `players`)
+- [ ] Takım fotoğrafları (`data/site.js` → `teams[].photo`)
+- [ ] Maç sonuçları oynandıkça `league[].score` alanına yazılmalı
+- [ ] TBF'de takımların teknik kadrosu boş; hangi antrenör hangi takımda?
+- [ ] Engelsiz Yaşam Merkezi'nin harita pini (şu an ad aramasıyla gösteriliyor) ve salon fotoğrafları
+- [ ] Rakiplerden Denizli Yıldızlar ve Saygın Spor'un logosu TBF'de yok (baş harf gösteriliyor)
+- [ ] Vizyon & Misyon metni taslak — kulüple onaylanmalı
+- [ ] Antrenörlerin sosyal medya hesapları (`coaches[].social`: instagram, x, linkedin)
+
+## DİBA
 - [ ] DİBA'nın kendi Instagram hesabı var mı? (şu an @ileribasketbolakademi kullanılıyor)
 - [ ] DİBA ile TOFAŞ okulunun antrenman yeri ve iletişim numarası aynı mı?
 
