@@ -1,4 +1,12 @@
-# Denizli Tofaş Basketbol Okulları — Web Sitesi
+# TOFAŞ Basketbol Okulları × DİBA — Denizli İleri Basketbol
+
+Denizli'de aynı çatı altındaki iki kulübün ortak sitesi: **TOFAŞ Basketbol
+Okulları Denizli** (6–16 yaş basketbol eğitimi) ve **DİBA · Denizli İleri
+Basketbol** (yerel ligde DİBA adıyla mücadele eden kulüp). İki marka eşit
+ağırlıkta: header, footer, hero paneli ve paylaşım görselinde iki logo yan
+yana durur; renkler TOFAŞ'ın lacivert + yeşil sistemidir. Hedef alan adı:
+`denizliileribasketbol.com`.
+
 
 Denizli Tofaş Basketbol Okulları'nın tanıtım ve ön kayıt sitesi. Tasarım sıfırdan
 yapılmadı: Tofaş Spor Kulübü için hazırlanan sitenin (`~/Desktop/TOFAŞ`)
@@ -54,6 +62,7 @@ konsola 404 düşmez.
 | Dosya | İçerik | TOFAŞ karşılığı |
 | --- | --- | --- |
 | `index.html` | Gönderilerden 5'li slider + ön kayıt paneli, hazırlık maçları, sekmeli haberler, antrenör şeridi, yaş grupları tablosu, galeri + sayılar, konum ve harita | Ana sayfa (slider + sıradaki maç, son/yaklaşan maçlar, haberler, kadro şeridi, puan durumu, albümler) |
+| `kulupler.html` | İki kulübün tanıtımı; DİBA bölümü (lig/takım bilgisi gelince doldurulacak) | Kulüp |
 | `programlar.html` | Yaş grupları tablosu, grup kartları, antrenman yaklaşımı, yaz okulu | Puan durumu tablosu + branşlar + kulüp metin blokları |
 | `antrenorler.html` | İki baş antrenör vitrini + teknik ekip kartları (fotoğraf yoksa baş harf) | Teknik kadro |
 | `galeri.html` | Instagram fotoğrafları, klavyeyle gezilen lightbox | Galeri |
@@ -63,6 +72,21 @@ konsola 404 düşmez.
 
 Her sayfada iki ana eylem: header'da **Ön Kayıt** ve **WhatsApp'tan Yaz**;
 mobilde ekranın altında sabit `Ara · WhatsApp · Ön Kayıt` çubuğu.
+
+## Logolar ve font
+
+| Dosya | Kaynak |
+| --- | --- |
+| `assets/img/tofas-denizli.png` | TOFAŞ Bursa 1974 · Denizli Basketbol Okulları logosu (beyaz zemini kaldırıldı) |
+| `assets/img/tofas-pill.png` | Aynı logonun yalnız hap kısmı — header, footer, hero paneli |
+| `assets/img/diba.png`, `diba-buyuk.png` | DİBA Denizli 2025 logosu (PDF'teki saydam görselden) |
+| `assets/img/og.jpg` | Paylaşım görseli: iki logo yan yana, 1200×630 |
+
+**Fiat Typeface** (`assets/fonts/`) TOFAŞ logosundaki yazı karakteridir.
+Türkçe harfleri (Ş İ Ğ Ö Ü Ç) ve noktalama içermediği için yalnız ASCII
+içerikli yerlerde kullanılır: grup kodları (Kids, U10…), sayılar ve skor
+etiketleri. Eksik karakterler otomatik olarak Archivo'ya düşer. Font
+onlinewebfonts.com'dan, CC BY 4.0 ile geldi; kredi footer'da.
 
 ## Ön kayıt formu
 

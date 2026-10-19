@@ -6,6 +6,16 @@
    Motion: giriş için ease-out, UI'da 300 ms altı, yalnız transform/opacity.
    ========================================================================== */
 
+/* Fiat Typeface — TOFAŞ logosundaki yazı karakteri. Türkçe harfler (Ş İ Ğ Ö Ü Ç)
+   ve noktalama içermediği için yalnız ASCII içerikli yerlerde (grup kodları,
+   sayılar, skor etiketleri) kullanılır; eksik karakterler Archivo'ya düşer.
+   Lisans: onlinewebfonts.com, CC BY 4.0 — kredi footer'da. */
+@font-face {
+  font-family: "Fiat Typeface";
+  src: url("../fonts/fiat.woff2") format("woff2"), url("../fonts/fiat.woff") format("woff");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
 :root {
   /* Brand — logodan örneklendi */
   --navy: #1d2751;
@@ -36,6 +46,7 @@
   /* Type */
   --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: "Archivo", "Inter", -apple-system, sans-serif;
+  --font-fiat: "Fiat Typeface", "Archivo", "Inter", sans-serif;
 
   /* Motion — hazır easing'ler zayıf kaldığı için özel eğriler */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -824,6 +835,7 @@ table.standings tr.zone-bottom td.pos { color: #b3243a; }
   .card:hover, .pcard:hover, .scard:hover, .branch:hover, .tile:hover, .promo a:hover { transform: none; }
   .btn:active, .social a:active, .burger:active, .tabs__btn:active, .lb__btn:active { transform: none; }
   .roster-track { animation: none; }
+  .club:hover { transform: none; }
 }
 
 /* ==========================================================================
@@ -945,6 +957,44 @@ select.input {
 .faq__a { padding: 0 20px 18px; margin: 0; color: var(--ink-2); font-size: 14.5px; }
 .faq__a a { color: var(--blue); font-weight: 700; }
 
+/* Fiat Typeface — yalnız ASCII içerikli öğeler */
+.stat b, .cd b, table.standings td.pts, .fx__score.pending, .ff-fiat {
+  font-family: var(--font-fiat); font-weight: 400; letter-spacing: 0;
+}
+.fx__score.pending { letter-spacing: 0.06em; }
+
+/* İki kulüp, eşit ağırlık: TOFAŞ Denizli + DİBA */
+.brand--duo { gap: 10px; }
+.brand--duo .brand__tofas { width: auto; height: 42px; }
+.brand--duo .brand__diba { width: auto; height: 54px; }
+.brand__x { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--ink-3); }
+.ftr .brand__x { color: var(--on-dark-3); }
+.ftr .brand--duo .brand__tofas { height: 46px; }
+.ftr .brand--duo .brand__diba { height: 60px; }
+.ftr__name { display: block; margin-top: 16px; font-family: var(--font-display); font-weight: 800; font-size: 15px; color: #fff; letter-spacing: 0.01em; }
+.ftr__name span { display: block; font-family: var(--font); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--on-dark-3); margin-top: 4px; font-weight: 600; }
+.nextmatch__brand .duo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.nextmatch__brand .duo .brand__tofas { width: auto; height: 34px; }
+.nextmatch__brand .duo .brand__diba { width: auto; height: 46px; }
+
+/* Kulüp kartları — TOFAŞ teknik kadro vitrininin dili */
+.clubs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.club {
+  display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line);
+  border-radius: var(--radius-lg); box-shadow: var(--sh-1); overflow: hidden;
+  transition: transform 220ms var(--ease-out), box-shadow 220ms ease;
+}
+.club__media {
+  display: flex; align-items: center; justify-content: center; height: 200px; padding: 24px;
+  background: linear-gradient(178deg, #f2f5fa 0%, #e7ecf5 58%, #dde4f0 100%); border-bottom: 1px solid var(--line);
+}
+.club__media img { max-height: 100%; width: auto; max-width: 80%; }
+.club__body { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.club__body h3 { font-size: 20px; color: var(--navy); }
+.club__body p { margin: 0; font-size: 14px; color: var(--ink-2); }
+.club__body .btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
+.ftr__credit a { font-size: 12px; color: var(--on-dark-3); }
+
 /* Mobil menü sonundaki eylemler */
 .nav__cta { display: none; }
 
@@ -963,6 +1013,7 @@ select.input {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .club:hover { transform: translateY(-3px); box-shadow: var(--sh-2); }
   .choice label:hover { border-color: var(--blue); }
   .faq summary:hover { color: var(--blue); }
 }
@@ -971,6 +1022,7 @@ select.input {
   .hdr__wa { display: none; }
   .coaches { grid-template-columns: 1fr; }
   .grid--form { grid-template-columns: 1fr; }
+  .nav__link { padding: 0 10px; }
 }
 
 @media (max-width: 900px) {
@@ -985,6 +1037,12 @@ select.input {
   .form { grid-template-columns: 1fr; }
   .formcard { padding: 20px 16px; }
   .coaches .coach { grid-template-columns: 1fr; }
+  .clubs { grid-template-columns: 1fr; }
+  .brand--duo { gap: 7px; }
+  .brand--duo .brand__tofas { height: 32px; }
+  .brand--duo .brand__diba { height: 42px; }
+  .brand__x { font-size: 13px; }
+  .club__media { height: 160px; }
   .coach__media.pcard__media { min-height: 0; aspect-ratio: 16 / 9; }
 }
 

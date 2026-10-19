@@ -9,7 +9,8 @@ Bilgiler 19 Ekim 2026'da kulübün Instagram hesabından ve açık kaynaklardan 
 |---|---|
 | Ad | Denizli Tofaş Basketbol Okulları (Instagram adı: "Denizli Tofaş Basketbol") |
 | Bağlı olduğu yapı | TOFAŞ Spor Kulübü (Bursa, 1974) basketbol okulları ağı |
-| Yürütücü akademi | DİBA · Denizli İleri Basketbol Akademi (Instagram: @ileribasketbolakademi), 2025'ten beri **(doğrula)** |
+| Ortak kulüp | **DİBA · Denizli İleri Basketbol** — TOFAŞ organizasyonunun parçası, yerel ligde DİBA adıyla oynuyor (kullanıcıdan, 19.10.2026). Logo: "DİBA Denizli 2025". Instagram: @ileribasketbolakademi. Sitede TOFAŞ ile **eşit ortaklık** olarak gösterilir. |
+| Alan adı (hedef) | denizliileribasketbol.com |
 | Hedef yaş | 6–16 yaş, kız ve erkek **(kız/erkek ayrımı doğrula)** |
 | Slogan (bio) | "Türkiye'nin En Büyük Altyapı Organizasyonu" |
 | Diğer sloganlar | "Geleceğin yıldızlarını bugünden yetiştiriyoruz." · "Disiplin, gelişim ve takım ruhuyla daha güçlü yarınlar için çalışıyoruz!" · "Sen de TOFAŞ ailesinin bir parçası ol!" |
