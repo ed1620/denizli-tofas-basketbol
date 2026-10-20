@@ -1306,8 +1306,6 @@ table.roster-table td.team a { color: var(--navy); }
 }
 
 @media (max-width: 900px) {
-  .actionbar { display: grid; }
-  body { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
   .nav--open .nav__cta { display: grid; gap: 10px; margin-top: 16px; }
   .nav--open .nav__cta .btn { width: 100%; height: 48px; font-size: 15px; }
 }
