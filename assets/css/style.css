@@ -964,7 +964,7 @@ select.input {
 .fx__score.pending { letter-spacing: 0.06em; }
 
 /* İki kulüp, eşit ağırlık: TOFAŞ Denizli + DİBA */
-.brand--duo { gap: 10px; }
+.brand--duo { gap: 14px; }
 .brand--duo .brand__tofas { width: auto; height: 42px; }
 .brand--duo .brand__diba { width: auto; height: 54px; }
 .brand__x { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--ink-3); }
@@ -1086,7 +1086,7 @@ table.roster-table td.team a { color: var(--navy); }
   transition: opacity 320ms var(--ease-out), visibility 0s linear 320ms;
   animation: loaderFailsafe 0s linear 4.5s forwards;   /* JS çalışmazsa */
 }
-.loader__in { display: flex; align-items: center; gap: 18px; animation: loaderIn 600ms var(--ease-out) both; }
+.loader__in { display: flex; align-items: center; gap: 28px; animation: loaderIn 600ms var(--ease-out) both; }
 .loader__in img:first-child { height: 84px; width: auto; }
 .loader__in img:last-child { height: 112px; width: auto; }
 .loader__in span { font-family: var(--font-display); font-weight: 800; font-size: 20px; color: var(--ink-3); }
@@ -1325,7 +1325,7 @@ table.roster-table td.team a { color: var(--navy); }
   .matchhead__row { gap: 12px; }
   .mfacts div { grid-template-columns: 100px minmax(0, 1fr); }
   .venue__map iframe { height: 260px; }
-  .brand--duo { gap: 7px; }
+  .brand--duo { gap: 10px; }
   .brand--duo .brand__tofas { height: 32px; }
   .brand--duo .brand__diba { height: 42px; }
   .brand__x { font-size: 13px; }
