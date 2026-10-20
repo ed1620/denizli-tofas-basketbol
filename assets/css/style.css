@@ -1333,6 +1333,127 @@ table.roster-table td.team a { color: var(--navy); }
   .coach__media.pcard__media { min-height: 0; aspect-ratio: 16 / 9; }
 }
 
+/* ==========================================================================
+   Tablet ve telefon düzeni — en sonda, önceki kuralları ezer
+   ========================================================================== */
+
+/* Tablet (768–900): menü sığıyor, hamburgere gerek yok */
+@media (min-width: 768px) and (max-width: 900px) {
+  .nav { display: flex; }
+  .burger { display: none; }
+  .nav__link { padding: 0 9px; font-size: 13px; }
+  .actionbar { display: none; }
+  body { padding-bottom: 0; }
+  .brand--duo .brand__tofas { height: 36px; }
+  .brand--duo .brand__diba { height: 46px; }
+}
+
+/* Tablet genel (≤1080) */
+@media (max-width: 1080px) {
+  .feature__team b { font-size: 16px; }
+  .teamtop__photo { aspect-ratio: 16 / 7; }
+  .footer-cols { grid-template-columns: 1fr 1fr; }
+}
+
+/* Telefon (<768) */
+@media (max-width: 767px) {
+  :root { --gutter: 18px; --header-h: 64px; }
+  .topbar { display: none; }
+  .hdr__in { height: var(--header-h); }
+  .hdr__end { margin-left: auto; gap: 8px; }
+  .nav__link[aria-current="page"]::after { bottom: -14px; }
+
+  /* başlık ve bölümler */
+  .sec { padding: 44px 0; }
+  .sec--tight { padding: 26px 0; }
+  .sec__head { flex-direction: row; align-items: flex-end; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 20px; }
+  .sec__head > div:first-child { flex: 1 1 220px; }
+  .sec__title { font-size: 25px; }
+  .sec__sub { font-size: 14px; }
+  .phead { padding: 26px 0 20px; }
+  .phead h1 { font-size: 29px; }
+  .phead p { font-size: 14.5px; }
+
+  /* slider */
+  .hero--full .slider__track { aspect-ratio: 4 / 3; }
+  .slide__body { padding: 18px; }
+  .slide__title { font-size: 21px; margin-bottom: 10px; }
+  .slide__meta { margin-bottom: 8px; }
+  .slider__nav { right: 16px; bottom: 14px; }
+  .dot { width: 18px; }
+
+  /* haber kartları: telefonda yatay liste */
+  .grid--2, .grid--3, .grid--4 { grid-template-columns: 1fr; gap: 12px; }
+  .grid > .card { display: grid; grid-template-columns: 116px minmax(0, 1fr); }
+  .grid > .card .card__media { position: relative; aspect-ratio: auto; height: 100%; min-height: 100px; }
+  .grid > .card .card__media > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .grid > .card .card__body { padding: 12px 14px; }
+  .grid > .card .card__title { font-size: 14.5px; -webkit-line-clamp: 3; }
+  .grid > .card .card__badge { top: 6px; left: 6px; font-size: 8.5px; height: 18px; padding: 0 6px; }
+
+  /* galeri kareleri ikili */
+  #galleryhome, #albums, #videos { grid-template-columns: repeat(2, 1fr); }
+  .tile__body { padding: 10px 11px; }
+  .tile__title { font-size: 12.5px; }
+  .tile__meta { font-size: 10px; }
+  .tile__play span { width: 40px; height: 40px; }
+
+  /* sayılar */
+  .stats { gap: 10px; }
+  .stat { padding: 16px; }
+  .stat b { font-size: 28px; }
+
+  /* antrenör, branş, kulüp */
+  .branch { padding: 20px; }
+  .scard__body { padding: 10px 12px 12px; }
+  .scard__name { font-size: 13px; }
+  .grid--4 > .scard { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; }
+  .grid--4 > .scard .scard__media { aspect-ratio: 1; }
+  .coach__body { padding: 20px; }
+  .coach__name { font-size: 22px; }
+
+  /* profil fotoğrafı ekranı kaplamasın */
+  .profile { gap: 22px; }
+  .profile__media { max-width: 300px; width: 100%; margin: 0 auto; }
+  .profile .stats { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* takım başlığı */
+  .teamtop__photo { aspect-ratio: 4 / 3; }
+  .teamtop__title { padding-bottom: 16px; }
+  .teamnav a { height: 46px; padding: 0 11px; font-size: 13px; }
+  .teamnav a[aria-current="page"]::after { left: 11px; right: 11px; }
+
+  /* kadro şeridi kartları biraz küçük */
+  .roster-track > * { width: 168px; }
+  .roster-strip::before, .roster-strip::after { width: 40px; }
+
+  /* fikstür */
+  .fx-month { margin: 22px 0 10px; }
+  .tabsbar { margin-bottom: 18px; }
+
+  /* footer */
+  .partners { padding: 22px 0; }
+  .ftr { padding: 40px 0 20px; }
+  .ftr__grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+  .ftr__grid > :first-child { grid-column: 1 / -1; }
+  .ftr__about { max-width: none; }
+  .ftr__base { flex-direction: column; align-items: flex-start; gap: 6px; }
+
+  /* harita */
+  .map iframe, .venue__map iframe { height: 260px; }
+}
+
+/* Küçük telefon (≤380) */
+@media (max-width: 380px) {
+  :root { --gutter: 14px; }
+  .brand--duo .brand__tofas { height: 28px; }
+  .brand--duo .brand__diba { height: 38px; }
+  .hdr__end .btn--sm { padding: 0 11px; font-size: 12px; }
+  .grid > .card { grid-template-columns: 100px minmax(0, 1fr); }
+  .ftr__grid { grid-template-columns: 1fr; }
+  .game__name { font-size: 14px; }
+}
+
 @media print {
   .topbar, .hdr, .ftr, .slider__nav, .actionbar { display: none; }
   body { color: #000; }

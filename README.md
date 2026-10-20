@@ -1,4 +1,4 @@
-# TOFAŞ Basketbol Okulları × DİBA — Denizli İleri Basketbol
+# TOFAŞ Basketbol Okulları ve DİBA — Denizli İleri Basketbol
 
 Denizli'de aynı çatı altındaki iki kulübün ortak sitesi: **TOFAŞ Basketbol
 Okulları Denizli** (6–16 yaş basketbol eğitimi) ve **DİBA · Denizli İleri
@@ -61,7 +61,7 @@ konsola 404 düşmez.
 
 Header: logolar solda; menü (**Anasayfa · Kulüp ▾ · Takım ▾ · Medya ▾ · İletişim**) ve **Ön Kayıt**
 sağda. Footer'ın üstünde TBF Denizli İl Temsilciliği'ne giden federasyon bandı var. Her sayfa
-yüklenirken TOFAŞ × DİBA logolu açılış ekranı en az 1,6 sn görünür (en fazla 3,5 sn; JS çalışmazsa
+yüklenirken TOFAŞ · DİBA logolu açılış ekranı en az 1,6 sn görünür (en fazla 3,5 sn; JS çalışmazsa
 CSS 4,5 sn'de kaldırır).
 
 | Dosya | İçerik | Menü |

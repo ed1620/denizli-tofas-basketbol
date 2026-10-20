@@ -586,7 +586,7 @@
   function pageTeam() {
     var t = teamFromQuery();
     if (!t) return;
-    document.title = t.full + ' — TOFAŞ × DİBA Denizli';
+    document.title = t.full + ' — TOFAŞ · DİBA Denizli';
     teamHeader(t, 'genel');
 
     var ms = matchesOfTeam(t);
@@ -621,7 +621,7 @@
   function pageRoster() {
     var t = teamFromQuery();
     if (!t) return;
-    document.title = t.full + ' Kadrosu — TOFAŞ × DİBA Denizli';
+    document.title = t.full + ' Kadrosu — TOFAŞ · DİBA Denizli';
     teamHeader(t, 'kadro');
     var host = $('#rs-list');
     var list = playersOf(t.id);
@@ -659,7 +659,7 @@
     var p = playerById(new URLSearchParams(location.search).get('id')) || (S.players || [])[0];
     if (!p) return;
     var t = teamById(p.team);
-    document.title = personName(p.name) + ' — TOFAŞ × DİBA Denizli';
+    document.title = personName(p.name) + ' — TOFAŞ · DİBA Denizli';
     $('#pl-crumb').textContent = personName(p.name);
     var tl = $('#pl-team-link'); tl.textContent = t.full; tl.href = 'kadro.html?id=' + t.id;
     $('#pl-name').textContent = personName(p.name);
@@ -687,7 +687,7 @@
   function pageMatch() {
     var m = matchById(new URLSearchParams(location.search).get('id')) || allMatches()[0];
     if (!m) return;
-    document.title = m.home.name + ' - ' + m.away.name + ' — TOFAŞ × DİBA Denizli';
+    document.title = m.home.name + ' - ' + m.away.name + ' — TOFAŞ · DİBA Denizli';
     $('#mc-crumb').textContent = m.home.name + ' - ' + m.away.name;
     $('#mc-comp').textContent = m.comp + ' · ' + m.week;
     $('#mc-home').innerHTML = crest(m.home) + '<b>' + esc(m.home.name) + '</b>';
@@ -791,7 +791,7 @@
   function pageCoach() {
     var c = coachById(new URLSearchParams(location.search).get('id')) || (S.coaches || [])[0];
     if (!c) return;
-    document.title = personName(c.name) + ' — Antrenörlerimiz — TOFAŞ × DİBA Denizli';
+    document.title = personName(c.name) + ' — Antrenörlerimiz — TOFAŞ · DİBA Denizli';
     $('#co-crumb').textContent = personName(c.name);
     $('#co-name').textContent = personName(c.name);
     $('#co-title').textContent = c.title;
@@ -799,7 +799,7 @@
       ? '<img src="' + esc(c.photo) + '" alt="' + esc(personName(c.name)) + '">'
       : '<div class="pcard__ghost">' + esc(initials(c.name)) + '</div>';
     var facts = $('#co-facts');
-    [['Görev', c.title], ['Sezon', '2026-2027'], ['Kulüp', 'TOFAŞ × DİBA']]
+    [['Görev', c.title], ['Sezon', '2026-2027'], ['Kulüp', 'TOFAŞ · DİBA']]
       .forEach(function (f) { facts.appendChild(el('div', 'stat', '<b style="font-size:17px">' + esc(f[1]) + '</b><span>' + esc(f[0]) + '</span>')); });
     var soc = $('#co-social');
     var links = Object.keys(c.social || {}).filter(function (k) { return c.social[k]; });
@@ -984,7 +984,7 @@
 
   /* ----------------------------------------------------------------- boot */
 
-  /** Açılış ekranı: TOFAŞ × DİBA logoları sayfa yüklenene kadar görünür, sonra solar.
+  /** Açılış ekranı: TOFAŞ · DİBA logoları sayfa yüklenene kadar görünür, sonra solar.
    *  JS çalışmazsa CSS'teki zaman aşımı ekranı yine kaldırır. */
   function loader() {
     var l = $('.loader');
