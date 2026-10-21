@@ -606,8 +606,15 @@
     }
 
     var fx = $('#tm-fixtures');
-    if (ms.length) { ms.forEach(function (m) { fx.appendChild(matchRow(m, t.id)); }); markReveal(fx, '.game'); }
-    else fx.appendChild(el('p', 'sec__sub', 'Bu yaş grubunun TBF liginde maçı yok.'));
+    var xb = $('#tm-excel');
+    if (ms.length) {
+      ms.forEach(function (m) { fx.appendChild(matchRow(m, t.id)); });
+      markReveal(fx, '.game');
+      if (xb) xb.addEventListener('click', function () { downloadFixtures(ms, t.id, fileSlug(t.name)); });
+    } else {
+      fx.appendChild(el('p', 'sec__sub', 'Bu yaş grubunun TBF liginde maçı yok.'));
+      if (xb) xb.remove();
+    }
 
     var news = $('#tm-news');
     var posts = sortedPosts().filter(function (p) { return (p.groups || []).indexOf(t.group) > -1; });
@@ -725,6 +732,93 @@
     markReveal(rel, '.game');
   }
 
+  /* ------------------------------------------------------- Excel (.xlsx) */
+
+  /* Kütüphanesiz, gerçek .xlsx: Office Open XML dosyaları sıkıştırmasız ("stored")
+     bir ZIP içine yazılır. Başlık satırı kalın, sabit ve filtreli. */
+  var CRC_TABLE = (function () {
+    var t = [], c;
+    for (var n = 0; n < 256; n++) {
+      c = n;
+      for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function zipStore(files) {
+    var enc = new TextEncoder(), parts = [], central = [], offset = 0;
+    function u16(v) { return [v & 255, (v >>> 8) & 255]; }
+    function u32(v) { return [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255]; }
+    files.forEach(function (f) {
+      var name = enc.encode(f.name), data = enc.encode(f.data), crc = crc32(data);
+      var head = [].concat([0x50, 0x4b, 0x03, 0x04], u16(20), u16(0x0800), u16(0), u16(0), u16(0x21),
+        u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0));
+      parts.push(new Uint8Array(head), name, data);
+      central.push(new Uint8Array([].concat([0x50, 0x4b, 0x01, 0x02], u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0x21),
+        u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset))), name);
+      offset += head.length + name.length + data.length;
+    });
+    var size = central.reduce(function (n, b) { return n + b.length; }, 0);
+    var end = new Uint8Array([].concat([0x50, 0x4b, 0x05, 0x06], u16(0), u16(0), u16(files.length), u16(files.length), u32(size), u32(offset), u16(0)));
+    return new Blob(parts.concat(central, [end]), { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  }
+  function xmlEsc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; });
+  }
+  function colName(i) { var s = ''; i++; while (i) { var m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = (i - m - 1) / 26; } return s; }
+
+  /** rows: ilk satır başlık. widths: sütun genişlikleri (karakter). */
+  function xlsxBlob(sheetName, rows, widths) {
+    var last = colName(rows[0].length - 1) + rows.length;
+    var sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+      '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>' +
+      '<cols>' + widths.map(function (w, i) { return '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>'; }).join('') + '</cols>' +
+      '<sheetData>' + rows.map(function (r, ri) {
+        return '<row r="' + (ri + 1) + '">' + r.map(function (v, ci) {
+          var ref = colName(ci) + (ri + 1), st = ri === 0 ? ' s="1"' : '';
+          if (typeof v === 'number') return '<c r="' + ref + '"' + st + '><v>' + v + '</v></c>';
+          return '<c r="' + ref + '"' + st + ' t="inlineStr"><is><t xml:space="preserve">' + xmlEsc(v) + '</t></is></c>';
+        }).join('') + '</row>';
+      }).join('') + '</sheetData>' +
+      '<autoFilter ref="A1:' + last + '"/></worksheet>';
+    var files = [
+      { name: '[Content_Types].xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+      { name: '_rels/.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+      { name: 'xl/workbook.xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="' + xmlEsc(sheetName.slice(0, 31)) + '" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">\'' + xmlEsc(sheetName.slice(0, 31)) + '\'!$A$1:$' + colName(rows[0].length - 1) + '$' + rows.length + '</definedName></definedNames></workbook>' },
+      { name: 'xl/_rels/workbook.xml.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+      { name: 'xl/styles.xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1D2751"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>' },
+      { name: 'xl/worksheets/sheet1.xml', data: sheet }
+    ];
+    return zipStore(files);
+  }
+
+  /** Maç listesini Excel olarak indirir. teamId verilirse o takımın gözünden yazar. */
+  function downloadFixtures(list, teamId, fileLabel) {
+    var head = ['Tarih', 'Gün', 'Saat', 'Takımımız', 'Lig', 'Hafta', 'Maç No', 'Ev Sahibi', 'Misafir', 'Rakip', 'İç saha / Deplasman', 'Sonuç', 'Skor', 'Salon', 'Adres'];
+    var rows = [head].concat(list.map(function (m) {
+      var p = perspective(m, teamId), v = venueById(m.venue), d = dateKey(m.date, m.time);
+      return [m.date, DAYS[d.getDay()], m.time || '', p.us.name, m.comp, m.week, m.no, m.home.name, m.away.name, p.opp.name,
+        p.home ? 'İç saha' : 'Deplasman', p.res ? (p.res.win ? 'Galibiyet' : 'Mağlubiyet') : 'Oynanmadı',
+        p.res ? p.res.mine + '-' + p.res.theirs : '', v ? v.name : '', v ? v.address : ''];
+    }));
+    var blob = xlsxBlob('Fikstür', rows, [12, 11, 7, 14, 22, 9, 10, 32, 32, 32, 17, 12, 8, 44, 42]);
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'DIBA-fikstur-2026-2027' + (fileLabel ? '-' + fileLabel : '') + '.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function fileSlug(s) {
+    return String(s).toLocaleLowerCase('tr-TR').replace(/[çğıöşü]/g, function (c) { return { 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u' }[c]; }).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
   /* -------------------------------------------------------- page: fixtures */
 
   function pageFixtures() {
@@ -733,7 +827,10 @@
     var all = allMatches();
     var tabs = [['Tümü', null]];
     (S.teams || []).filter(function (t) { return t.league; }).forEach(function (t) { tabs.push([t.name, t.id]); });
+    var current = 0;
+    function filtered(i) { var id = tabs[i][1]; return all.filter(function (m) { return !id || m.teams.indexOf(id) > -1; }); }
     function render(i) {
+      current = i;
       host.innerHTML = '';
       var month = '', id = tabs[i][1];
       all.filter(function (m) { return !id || m.teams.indexOf(id) > -1; }).forEach(function (m) {
@@ -747,6 +844,10 @@
     var t = $('#fixturetabs');
     if (t) buildTabs(t, tabs.map(function (x) { return x[0]; }), render);
     render(0);
+    var xb = $('#fx-excel');
+    if (xb) xb.addEventListener('click', function () {
+      downloadFixtures(filtered(current), tabs[current][1], current ? fileSlug(tabs[current][0]) : 'tum-takimlar');
+    });
 
     var sum = $('#fxsummary');
     if (sum) {

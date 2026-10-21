@@ -74,7 +74,7 @@ CSS 4,5 sn'de kaldırır).
 | `takim.html?id=` | Kids, U10, U11, U12, U14, U16 A, U16 B: en üstte takım fotoğrafı + alt menü (Genel Bakış · Kadro · Fikstür · Haberler · TBF), sıradaki maç (yoksa son maç), kayan oyuncu şeridi + "Oyuncuları listele", fikstür, haberler | Takım |
 | `kadro.html?id=` | Takımın kadro listesi (Sidearms tarzı satırlar), ad / doğum yılı / forma no sıralama | — |
 | `oyuncu.html?id=` | Sporcu profili: ad soyad, doğum yılı, takım, biyografi | — |
-| `fikstur.html` | Tüm takımların TBF lig maçları, ay ay; takım sekmeleri | Takım → Tüm Fikstür |
+| `fikstur.html` | Tüm takımların TBF lig maçları, ay ay; takım sekmeleri; **Excel olarak indir** (seçili sekme) | Takım → Tüm Fikstür |
 | `mac.html?id=` | Maç detayı: skor tabelası, künye, salon + harita, sıradaki maçlar | — |
 | `galeri.html` / `videolar.html` / `haberler.html` | Fotoğraf albümü, videolar, haberler | Medya |
 | `kayit.html` | Ön kayıt formu (WhatsApp'a hazır mesaj) + SSS | Ön Kayıt |
@@ -91,6 +91,14 @@ CSS 4,5 sn'de kaldırır).
   satır, maç detayı ve "Son Maçlar" kendiliğinden güncellenir.
 - **`posts[].groups`** — haberin hangi takım sayfalarında görüneceği.
 - Rakip logoları `assets/teams/` altında (TBF sitesinden). Logosu olmayan kulüpte baş harfler görünür.
+
+## Fikstürü Excel olarak indirme
+
+Fikstür sayfasında ve her takımın sayfasında **Excel olarak indir** düğmesi var. Dosya
+tarayıcıda üretilir (kütüphane yok): sıkıştırmasız ZIP içinde Office Open XML. Sütunlar:
+Tarih, Gün, Saat, Takımımız, Lig, Hafta, Maç No, Ev Sahibi, Misafir, Rakip, İç saha /
+Deplasman, Sonuç, Skor, Salon, Adres. Başlık satırı sabit ve filtreli. Fikstür sayfasında
+hangi sekme seçiliyse (Tümü, U14, U16 A, U16 B) o takımın maçları indirilir.
 
 ## Logolar ve font
 
