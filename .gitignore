@@ -1,2 +1,9 @@
 .DS_Store
 **/.DS_Store
+
+# Gizli / kişisel: asla depoya girmez (depo herkese açık)
+.env
+.env.*
+ozel/
+DENIZLI_TOFAS_WEB_SITESI.md
+Icon?
