@@ -995,8 +995,8 @@ select.input {
 .club__body .btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
 .ftr__credit a { font-size: 12px; color: var(--on-dark-3); }
 .ftr__design { font-size: 12.5px; color: var(--on-dark-3) !important; transition: color 160ms ease; }
-.ftr__design b { color: #fff; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, 0.3); text-underline-offset: 3px; transition: color 160ms ease, text-decoration-color 160ms ease; }
-@media (hover: hover) and (pointer: fine) { .ftr__design:hover, .ftr__design:hover b { color: var(--green-bright) !important; text-decoration-color: currentColor; } }
+.ftr__design b { color: #fff; font-weight: 600; transition: color 160ms ease; }
+@media (hover: hover) and (pointer: fine) { .ftr__design:hover, .ftr__design:hover b { color: var(--green-bright) !important; } }
 
 /* Tıklanabilir maç satırı, kartlar */
 a.fx { display: grid; color: inherit; }
