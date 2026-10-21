@@ -445,7 +445,7 @@
   function pageHome() {
     /* --- slider (TOFAŞ) */
     var track = $('#slidertrack'), dots = $('#sliderdots');
-    var slides = (S.slider || []).map(postByCode).filter(Boolean);
+    var slides = sortedPosts().slice(0, 7);   // son 7 haber
     if (track && slides.length) {
       var cur = 0, timer;
       var show = function (i) {
@@ -656,7 +656,7 @@
     }
     var sel = $('#rs-sort');
     sel.addEventListener('change', function () { render(sel.value); });
-    $('#rs-count').textContent = list.length + ' sporcu · TBF lisans listesi';
+    $('#rs-count').textContent = list.length + ' sporcu';
     render('ad');
   }
 

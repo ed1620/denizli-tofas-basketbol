@@ -994,6 +994,17 @@ select.input {
 .club__body p { margin: 0; font-size: 14px; color: var(--ink-2); }
 .club__body .btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
 .ftr__credit a { font-size: 12px; color: var(--on-dark-3); }
+.ftr__design {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 14px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.04);
+  font-size: 12px !important; color: var(--on-dark-2) !important; letter-spacing: 0.02em;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 160ms var(--ease-out);
+}
+.ftr__design span { text-transform: uppercase; font-size: 10px; letter-spacing: 0.16em; color: var(--on-dark-3); }
+.ftr__design b { font-family: var(--font-display); font-weight: 800; font-size: 13px; color: #fff; }
+.ftr__design svg { width: 14px; height: 14px; fill: var(--green-bright); }
+.ftr__design:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .ftr__design:hover { border-color: var(--green-bright); background: rgba(143, 198, 63, 0.08); } }
 
 /* Tıklanabilir maç satırı, kartlar */
 a.fx { display: grid; color: inherit; }

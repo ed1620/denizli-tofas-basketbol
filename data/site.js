@@ -22,8 +22,10 @@ window.SITE = {
   /* Doğum yılı eşlemesi 2026-27 sezonuna göre, TBF yaş kategorisi mantığıyla
      hesaplandı — kulüple doğrulanacak. */
   groups: [
-    { id: 'kids', name: 'Kids', age: '6–8 yaş', yearsLabel: '2018–2020 doğumlu', years: [2018, 2019, 2020],
+    { id: 'kids', name: 'Kids', age: '6–7 yaş', yearsLabel: '2019–2020 doğumlu', years: [2019, 2020],
       note: 'Mini basketbol', text: 'Basketbolla ilk tanışma: mini basketbol grubu.' },
+    { id: 'u9', name: 'U9', age: '8 yaş', yearsLabel: '2018 doğumlu', years: [2018],
+      note: 'Temel basketbol', text: 'Temel teknik ve oyun becerileri.' },
     { id: 'u10', name: 'U10', age: '9 yaş ve altı', yearsLabel: '2017 ve sonrası', years: [2017],
       note: 'Hazırlık maçları', text: 'Logos Basketbol ve Denizli Basket ile hazırlık maçlarına çıktı.' },
     { id: 'u11', name: 'U11', age: '10 yaş', yearsLabel: '2016 doğumlu', years: [2016],
@@ -99,6 +101,15 @@ window.SITE = {
       "group": "kids",
       "name": "Kids",
       "full": "Kids · Mini Basketbol",
+      "league": "",
+      "tbf": "",
+      "photo": ""
+    },
+    {
+      "id": "u9",
+      "group": "u9",
+      "name": "U9",
+      "full": "U9",
       "league": "",
       "tbf": "",
       "photo": ""
