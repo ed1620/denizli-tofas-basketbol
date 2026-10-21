@@ -92,6 +92,51 @@ CSS 4,5 sn'de kaldırır).
 - **`posts[].groups`** — haberin hangi takım sayfalarında görüneceği.
 - Rakip logoları `assets/teams/` altında (TBF sitesinden). Logosu olmayan kulüpte baş harfler görünür.
 
+## Yönetim paneli (`/panel/`)
+
+**Adres:** https://ed1620.github.io/denizli-tofas-basketbol/panel/ (sitede bağlantısı yok, yer imine ekleyin).
+
+Panele **DİBA mobil uygulamasındaki yönetici hesabıyla** (telefon + şifre) girilir. Yönetici
+olmayan hesaplar içeri alınmaz. Panelden yönetilenler:
+
+| Bölüm | Ne yapılır |
+| --- | --- |
+| Özet | Skoru girilmemiş geçmiş maçlar ve yaklaşan maçlar; tıklayıp skor girilir |
+| Maçlar | Maç ekle / düzenle / sil: takım, rakip, iç saha–deplasman, tarih, saat, salon, hafta, TBF maç no, skor, durum (Planlandı / Oynandı / Ertelendi / İptal) |
+| Takımlar | Takım menüsü ve takım sayfaları: ad, yaş grubu, doğum yılları, lig, TBF bağlantısı, takım fotoğrafı, sıra, gizle/göster |
+| Oyuncular | Kadro: ad soyad, takım, doğum yılı, forma no, pozisyon, fotoğraf, biyografi |
+| Rakipler | Rakip kulüpler ve logoları |
+| Antrenörler | Fotoğraf, görev, biyografi, Instagram / X / LinkedIn |
+| Salonlar | Adres, harita, yol tarifi, fotoğraf; "Antrenman Salonlarımız"da görünsün mü |
+| Haberler | Başlık, metin, görsel, bağlantı, kategori, ilgili takımlar (ana sayfa slider'ı son 7 haber) |
+| SSS | Ön Kayıt sayfasındaki sorular |
+| Okul bilgileri | Telefon, WhatsApp, adres, Instagram, sezon |
+
+Görseller panelden yüklenir ve Supabase Storage'daki `web-media` deposunda durur (5 MB'a kadar
+PNG/JPEG/WebP).
+
+### Veri nerede?
+
+Site verisi, DİBA mobil uygulamasıyla **aynı Supabase projesinde** (`lhozpvwxdbzqhwthszlo`),
+mobil uygulamanın tablolarından ayrı `web_*` tablolarında durur:
+
+- **Okuma:** herkese açık. Site açılırken bu tabloları okur. Supabase'e ulaşılamazsa
+  `data/site.js` yedeğiyle açılır.
+- **Yazma:** yalnız yönetici. Supabase güvenlik kuralları (RLS) ile `private.is_admin()` üzerinden
+  denetlenir.
+- **Gizli anahtar yok:** `data/config.js` içinde yalnız herkese açık (publishable) anahtar var.
+
+Kurulum SQL'leri `supabase/` klasöründe:
+
+| Dosya | Ne yapar |
+| --- | --- |
+| `01_site_semasi.sql` | Tablolar, güvenlik kuralları, görsel deposu |
+| `02_site_verisi.sql` | Sitenin ilk verisi |
+| `03_mobil_demo_temizle.sql` | Mobil uygulamanın demo verisini siler (21.10.2026'da çalıştırıldı) |
+
+**Not:** `data/site.js` artık yalnız yedektir. Güncel veri paneldedir; `site.js`'i elle
+güncellemeye gerek yok.
+
 ## Fikstürü Excel olarak indirme
 
 Fikstür sayfasında ve her takımın sayfasında **Excel olarak indir** düğmesi var. Dosya
@@ -150,8 +195,10 @@ tools/stamp.py         CSS/JS bağlantılarına sürüm damgası basar (TOFAŞ't
 tools/photos.py        fotoğrafları küçültür, listeyi yazar
 ```
 
-Header ve footer, TOFAŞ'ta olduğu gibi her sayfada statik HTML olarak tekrar
-eder; menüde değişiklik yaparken yedi sayfanın hepsini güncelleyin.
+Header ve footer her sayfada statik HTML'dir ama tek yerden yönetilir:
+`tools/parcalar/ust.html` ve `tools/parcalar/alt.html` düzenlenip
+`python3 tools/ortak.py && python3 tools/stamp.py` çalıştırılır. Takım menüsü verilerden
+(panelden) kurulur.
 
 ## Uygulanan tasarım kuralları
 
