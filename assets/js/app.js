@@ -55,10 +55,18 @@
      için .ph yer tutucusu (lacivert + soluk rozet) görünür. */
   function hasPhoto(code) { return PHOTOS.indexOf(code) > -1; }
   function igSrc(code, small) { return 'assets/instagram/' + (small ? '600/' : '') + code + '.jpg'; }
-  function postUrl(code) { return 'https://www.instagram.com/p/' + code + '/'; }
-  function imgTag(code, alt, small, attrs) {
-    if (!hasPhoto(code)) return '';
-    return '<img src="' + igSrc(code, small) + '" alt="' + esc(alt || '') + '" ' + (attrs == null ? 'loading="lazy"' : attrs) + ' decoding="async">';
+  /** Gönderi bağlantısı: panelden girilen bağlantı, yoksa Instagram gönderisi */
+  function postLink(p) { return p.link || 'https://www.instagram.com/p/' + p.code + '/'; }
+  /** Gönderi görseli: panelden yüklenen görsel; yerel Instagram arşivinde küçük sürüm (600/) */
+  function postImgSrc(p, small) {
+    if (p.image && !/^assets\/instagram\//.test(p.image)) return p.image;
+    if (hasPhoto(p.code)) return igSrc(p.code, small);
+    return '';
+  }
+  function postImg(p, alt, small, attrs) {
+    var src = postImgSrc(p, small);
+    if (!src) return '';
+    return '<img src="' + esc(src) + '" alt="' + esc(alt || '') + '" ' + (attrs == null ? 'loading="lazy"' : attrs) + ' decoding="async">';
   }
   function postByCode(code) { return (S.posts || []).filter(function (p) { return p.code === code; })[0]; }
   function sortedPosts() {
@@ -202,13 +210,13 @@
   /** Haber kartı — TOFAŞ kartı; Instagram gönderisine gider. */
   function newsCard(p, badge) {
     var a = el('a', 'card');
-    a.href = postUrl(p.code);
+    a.href = postLink(p);
     a.target = '_blank';
     a.rel = 'noopener';
     a.innerHTML =
       '<div class="card__media ph">' +
       (badge ? '<span class="tag tag--blue card__badge">' + esc(badge) + '</span>' : '') +
-      imgTag(p.code, p.title, true) + '</div>' +
+      postImg(p, p.title, true) + '</div>' +
       '<div class="card__body">' +
       '<h3 class="card__title">' + esc(p.title) + '</h3>' +
       '<div class="card__meta"><span class="date">' + esc(fmtDate(p.date)) + '</span></div>' +
@@ -258,7 +266,7 @@
       var t = teamById(x.team);
       return { us: true, name: 'DİBA ' + (t ? t.name : ''), logo: DIBA_LOGO, team: x.team };
     }
-    return { name: x.name, logo: x.logo ? 'assets/teams/' + x.logo + '.png' : '' };
+    return { name: x.name, logo: x.logo ? (/[\/.]/.test(x.logo) ? x.logo : 'assets/teams/' + x.logo + '.png') : '' };
   }
   var MATCHES = null;
   function allMatches() {
@@ -267,7 +275,7 @@
       var h = normSide(m.home), a = normSide(m.away);
       return {
         id: m.id, no: m.no, comp: m.comp, week: m.week, date: m.date, time: m.time,
-        home: h, away: a, score: m.score || '', venue: m.venue,
+        home: h, away: a, score: m.score || '', venue: m.venue, status: m.status || 'scheduled',
         teams: [h.team, a.team].filter(Boolean)
       };
     }).sort(function (a, b) { return dateKey(a.date, a.time) - dateKey(b.date, b.time); });
@@ -278,7 +286,7 @@
   function isPlayed(m) { return /\d/.test(m.score); }
   function upcoming(list) {
     var now = new Date();
-    return list.filter(function (m) { return !isPlayed(m) && dateKey(m.date, m.time) >= now; });
+    return list.filter(function (m) { return !isPlayed(m) && m.status !== 'cancelled' && dateKey(m.date, m.time) >= now; });
   }
   /** Bir maçı belirli bir takımın gözünden okur: biz kimiz, rakip kim, iç saha mı. */
   function perspective(m, teamId) {
@@ -298,6 +306,7 @@
     return '<span class="crest" aria-hidden="true">' + esc(initials(side.name)) + '</span>';
   }
 
+  var STATUS_LABEL = { postponed: 'Ertelendi', cancelled: 'İptal' };
   var MON3 = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
   var DAY3 = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
 
@@ -315,7 +324,7 @@
         '<div class="game__info"><div class="game__meta"><span class="game__team">' + esc(p.us.name) + '</span>' + esc(m.week) + '</div>' +
         '<div class="game__name">' + esc(p.opp.name) + '</div></div>' +
       '</div>' +
-      '<div class="game__where"><b>' + esc(m.time || 'Saat TBA') + '</b><span>' + esc(v ? v.short : '') + '</span></div>' +
+      '<div class="game__where"><b>' + esc(STATUS_LABEL[m.status] || m.time || 'Saat TBA') + '</b><span>' + esc(v ? v.short : '') + '</span></div>' +
       '<div class="game__end">' + (p.res
         ? '<span class="game__res ' + (p.res.win ? 'is-win' : 'is-loss') + '">' + (p.res.win ? 'G' : 'M') + '</span><b class="game__score">' + p.res.mine + '–' + p.res.theirs + '</b>'
         : '<span class="game__cta">Maç detayı ' + ARROW + '</span>') +
@@ -391,7 +400,7 @@
 
     function render() {
       var p = state.list[state.i];
-      img.src = igSrc(p.code);
+      img.src = postImgSrc(p);
       img.alt = p.title;
       count.textContent = (state.i + 1) + ' / ' + state.list.length + ' · ' + p.title;
       $$('.lb__btn[data-act="prev"], .lb__btn[data-act="next"]', node).forEach(function (b) {
@@ -423,14 +432,14 @@
    *  yoksa Instagram gönderisine gider. */
   function photoTile(p, list) {
     var a = el('a', 'tile');
-    a.href = postUrl(p.code);
+    a.href = postLink(p);
     a.target = '_blank';
     a.rel = 'noopener';
     a.innerHTML =
-      '<div class="tile__media ph">' + imgTag(p.code, p.title, true) + '</div>' +
+      '<div class="tile__media ph">' + postImg(p, p.title, true) + '</div>' +
       '<div class="tile__body"><h3 class="tile__title">' + esc(p.title) + '</h3>' +
       '<div class="tile__meta">' + esc(fmtDate(p.date)) + (p.type === 'video' ? ' · Video' : '') + '</div></div>';
-    if (hasPhoto(p.code)) {
+    if (postImgSrc(p)) {
       a.addEventListener('click', function (e) {
         e.preventDefault();
         LB.open(list, list.indexOf(p));
@@ -438,7 +447,7 @@
     }
     return a;
   }
-  function photoList() { return sortedPosts().filter(function (p) { return hasPhoto(p.code); }); }
+  function photoList() { return sortedPosts().filter(function (p) { return !!postImgSrc(p); }); }
 
   /* ------------------------------------------------------------ page: home */
 
@@ -462,11 +471,11 @@
         var d = el('div', 'slide ph');
         d.setAttribute('data-active', String(i === 0));
         d.innerHTML =
-          imgTag(p.code, '', false, i === 0 ? 'fetchpriority="high"' : 'loading="lazy"') +
+          postImg(p, '', false, i === 0 ? 'fetchpriority="high"' : 'loading="lazy"') +
           '<div class="slide__body">' +
           '<div class="slide__meta"><span class="tag">' + esc(CAT_LABEL[p.cat] || 'Haber') + '</span><span class="date">' + esc(fmtDate(p.date)) + '</span></div>' +
           '<h2 class="slide__title">' + esc(p.title) + '</h2>' +
-          '<a class="btn btn--onblue btn--sm" href="' + postUrl(p.code) + '" target="_blank" rel="noopener">Instagram’da gör ' + ARROW + '</a>' +
+          '<a class="btn btn--onblue btn--sm" href="' + postLink(p) + '" target="_blank" rel="noopener">Instagram’da gör ' + ARROW + '</a>' +
           '</div>';
         track.appendChild(d);
         var b = el('button', 'dot');
@@ -922,7 +931,7 @@
     var host = $('#albums');
     if (!host) return;
     var photos = sortedPosts().filter(function (p) { return p.type !== 'video'; });
-    var list = photos.filter(function (p) { return hasPhoto(p.code); });
+    var list = photos.filter(function (p) { return !!postImgSrc(p); });
     photos.forEach(function (p) { host.appendChild(photoTile(p, list)); });
     markReveal(host, '.tile');
   }
@@ -934,11 +943,11 @@
     if (!host) return;
     sortedPosts().filter(function (p) { return p.type === 'video'; }).forEach(function (p) {
       var a = el('a', 'tile');
-      a.href = postUrl(p.code);
+      a.href = postLink(p);
       a.target = '_blank';
       a.rel = 'noopener';
       a.innerHTML =
-        '<div class="tile__media ph">' + imgTag(p.code, p.title, true) + '</div>' +
+        '<div class="tile__media ph">' + postImg(p, p.title, true) + '</div>' +
         '<div class="tile__play"><span><svg viewBox="0 0 16 16"><path d="M3 1.5 14 8 3 14.5z"/></svg></span></div>' +
         '<div class="tile__body"><h3 class="tile__title">' + esc(p.title) + '</h3>' +
         '<div class="tile__meta">' + esc(fmtDate(p.date)) + ' · Instagram’da izle</div></div>';
@@ -1083,6 +1092,131 @@
     });
   }
 
+  /* ------------------------------------------------ canlı veri (Supabase) */
+
+  /* Site verisi yönetim panelinden girilir ve Supabase'deki web_* tablolarında durur.
+     Sayfa açılırken bu tablolar okunur (açılış ekranı bu sırada görünür). Supabase'e
+     ulaşılamazsa data/site.js'teki yedek veriyle devam edilir. */
+  var CFG = window.SUPABASE_CONFIG || null;
+  var REMOTE_TABLES = {
+    web_settings: '',
+    web_teams: '&is_active=eq.true&order=sort,name',
+    web_opponents: '',
+    web_venues: '&order=sort,name',
+    web_players: '&is_active=eq.true&order=sort,name',
+    web_coaches: '&is_active=eq.true&order=sort,name',
+    web_matches: '&order=match_date,match_time',
+    web_posts: '&is_published=eq.true&order=post_date.desc',
+    web_faq: '&is_active=eq.true&order=sort'
+  };
+
+  function fetchTable(t) {
+    return fetch(CFG.url + '/rest/v1/' + t + '?select=*' + REMOTE_TABLES[t], {
+      headers: { apikey: CFG.key, Authorization: 'Bearer ' + CFG.key }
+    }).then(function (r) {
+      if (!r.ok) throw new Error(t + ' ' + r.status);
+      return r.json();
+    });
+  }
+  function isoToTr(d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ''); return m ? m[3] + '.' + m[2] + '.' + m[1] : ''; }
+  function hhmm(t) { return t ? String(t).slice(0, 5) : ''; }
+
+  /** Supabase satırlarını sitenin kullandığı biçime çevirir. */
+  function toSite(r) {
+    var settings = {}; r.web_settings.forEach(function (x) { settings[x.key] = x.value; });
+    var okul = settings.okul || {};
+    var teams = r.web_teams.map(function (t) {
+      return { id: t.id, group: t.group_code, name: t.name, full: t.full_name, league: t.league || '', tbf: t.tbf_url || '', photo: t.photo_url || '',
+        yearsLabel: t.years_label || '', age: t.age_label || '', years: t.birth_years || [], note: t.note || '' };
+    });
+    var groups = [], seen = {};
+    teams.forEach(function (t) {
+      if (seen[t.group]) { seen[t.group].count++; return; }
+      seen[t.group] = { id: t.group, name: t.name, age: t.age, yearsLabel: t.yearsLabel, years: t.years, note: t.note, text: t.note, count: 1 };
+      groups.push(seen[t.group]);
+    });
+    groups.forEach(function (g) { if (g.count > 1) g.name = g.id.toUpperCase(); });
+    var opp = {}; r.web_opponents.forEach(function (o) { opp[o.id] = o; });
+    var league = r.web_matches.map(function (m) {
+      var ours = { team: m.team_id };
+      var other = m.opponent_team_id ? { team: m.opponent_team_id }
+        : opp[m.opponent_id] ? { name: opp[m.opponent_id].name, logo: opp[m.opponent_id].logo_url || '' }
+        : { name: m.opponent_name || 'Rakip', logo: '' };
+      var scored = m.our_score != null && m.their_score != null;
+      return {
+        id: m.id, no: m.code || '', comp: m.competition || '', week: m.week || '', date: isoToTr(m.match_date), time: hhmm(m.match_time),
+        home: m.is_home ? ours : other, away: m.is_home ? other : ours, venue: m.venue_id, status: m.status,
+        score: scored ? (m.is_home ? m.our_score + '-' + m.their_score : m.their_score + '-' + m.our_score) : ''
+      };
+    });
+    return {
+      school: {
+        name: okul.name || SC.name, phoneDisplay: okul.phone_display || SC.phoneDisplay, tel: okul.tel || SC.tel, wa: okul.whatsapp || SC.wa,
+        venue: okul.venue || SC.venue, address: okul.address || SC.address, instagram: okul.instagram || SC.instagram
+      },
+      groups: groups,
+      teams: teams,
+      players: r.web_players.map(function (p) {
+        return { id: p.id, name: p.name, born: p.born || '', team: p.team_id, number: p.number == null ? '' : String(p.number), position: p.position || '', photo: p.photo_url || '', bio: p.bio || '' };
+      }),
+      coaches: r.web_coaches.map(function (c) {
+        return { id: c.id, name: c.name, title: c.title, photo: c.photo_url || '', bio: c.bio || '', social: c.social || {} };
+      }),
+      venues: r.web_venues.map(function (v) {
+        return { id: v.id, name: v.name, short: v.short_name || v.name, use: v.use_text || '', address: v.address || '', capacity: v.capacity || '',
+          maps: v.maps_embed || '', dir: v.directions_url || '', photo: v.photo_url || '', listed: v.listed };
+      }),
+      league: league,
+      posts: r.web_posts.map(function (p) {
+        return { code: p.id, date: isoToTr(p.post_date), type: p.type, cat: p.cat, title: p.title, text: p.body || '', groups: p.groups || [],
+          via: p.via || '', image: p.image_url || '', link: p.link_url || '' };
+      }),
+      faq: r.web_faq.map(function (f) { return { q: f.question, a: f.answer || '' }; })
+    };
+  }
+
+  function loadRemote() {
+    if (!CFG || !window.fetch || !window.Promise) return Promise.resolve(null);
+    var names = Object.keys(REMOTE_TABLES);
+    var timeout = new Promise(function (_, rej) { setTimeout(function () { rej(new Error('zaman aşımı')); }, 4500); });
+    return Promise.race([Promise.all(names.map(fetchTable)), timeout]).then(function (rows) {
+      var r = {}; names.forEach(function (n, i) { r[n] = rows[i]; });
+      return toSite(r);
+    }).catch(function (e) {
+      console.warn('[site] canlı veri alınamadı, yedek veri kullanılıyor:', e.message);
+      return null;
+    });
+  }
+
+  /** Header'daki Takım menüsünü güncel takım listesinden kurar. */
+  function teamMenu() {
+    var trigger = $$('.nav__link').filter(function (a) { return /^Takım/.test(a.textContent.trim()); })[0];
+    var menu = trigger && trigger.parentNode.querySelector('.nav__menu');
+    if (!menu || !(S.teams || []).length) return;
+    menu.innerHTML = S.teams.map(function (t) { return '<a href="takim.html?id=' + encodeURIComponent(t.id) + '">' + esc(t.name) + '</a>'; }).join('') +
+      '<a href="fikstur.html">Tüm Fikstür</a>';
+  }
+
+  /* --------------------------------------------------------- page: venues */
+
+  function pageVenues() {
+    var host = $('#venues');
+    if (!host) return;
+    (S.venues || []).filter(function (v) { return v.listed !== false; }).forEach(function (v) {
+      var a = el('article', 'venue');
+      a.innerHTML =
+        '<div class="venue__photo ph">' + (v.photo ? '<img src="' + esc(v.photo) + '" alt="' + esc(v.name) + '" loading="lazy">' : '<span class="team-photo__note">Salon fotoğrafı yakında</span>') + '</div>' +
+        '<div class="venue__body">' + (v.use ? '<span class="eyebrow">' + esc(v.use) + '</span>' : '') +
+        '<h3>' + esc(v.name) + '</h3>' + (v.address ? '<p>' + esc(v.address) + '</p>' : '') +
+        (v.capacity ? '<p><strong>Kapasite:</strong> ' + esc(v.capacity) + '</p>' : '') +
+        (v.dir ? '<div class="btnrow" style="margin-top:auto"><a class="btn btn--primary btn--sm" href="' + esc(v.dir) + '" target="_blank" rel="noopener">Yol tarifi al ' + ARROW + '</a></div>' : '') +
+        '</div>' +
+        (v.maps ? '<div class="venue__map"><iframe src="' + esc(v.maps) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="' + esc(v.name) + ' konumu"></iframe></div>' : '');
+      host.appendChild(a);
+    });
+    markReveal(host, '.venue');
+  }
+
   /* ----------------------------------------------------------------- boot */
 
   /** Açılış ekranı: TOFAŞ · DİBA logoları sayfa yüklenene kadar görünür, sonra solar.
@@ -1105,20 +1239,28 @@
     setTimeout(hide, 3500);   // yavaş bağlantıda harita/görsel beklenmez
   }
 
-  function boot() {
-    loader();
+  function render() {
     header();
+    teamMenu();
     var page = document.body.getAttribute('data-page');
     try {
       ({
         home: pageHome, team: pageTeam, roster: pageRoster, player: pagePlayer, match: pageMatch, fixtures: pageFixtures,
-        coaches: pageCoaches, coach: pageCoach, gallery: pageGallery, videos: pageVideos,
+        coaches: pageCoaches, coach: pageCoach, gallery: pageGallery, videos: pageVideos, venues: pageVenues,
         news: pageNews, register: pageRegister
       }[page] || function () {})();
     } catch (err) {
       console.error('[denizli-tofas] render error', err);
     }
     reveal();
+  }
+
+  function boot() {
+    loader();
+    loadRemote().then(function (remote) {
+      if (remote) { S = remote; SC = S.school; MATCHES = null; }
+      render();
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

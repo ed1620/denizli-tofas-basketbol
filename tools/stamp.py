@@ -10,10 +10,10 @@ Kullanım:  python3 tools/stamp.py
 import os, re, glob
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TRACKED = ["assets/css/style.css", "assets/js/app.js", "data/site.js", "data/photos.js"]
+TRACKED = ["assets/css/style.css", "assets/js/app.js", "data/site.js", "data/photos.js", "data/config.js"]
 
 version = str(int(max(os.path.getmtime(os.path.join(ROOT, f)) for f in TRACKED)))
-pattern = re.compile(r'((?:href|src)=")((?:\.\./)*(?:assets/css/style\.css|assets/js/app\.js|data/site\.js|data/photos\.js))(?:\?v=\d+)?(")')
+pattern = re.compile(r'((?:href|src)=")((?:\.\./)*(?:assets/css/style\.css|assets/js/app\.js|data/site\.js|data/photos\.js|data/config\.js))(?:\?v=\d+)?(")')
 
 changed = 0
 for path in sorted(glob.glob(os.path.join(ROOT, "*.html"))):
