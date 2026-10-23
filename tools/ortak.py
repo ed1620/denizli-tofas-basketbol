@@ -22,7 +22,7 @@ BOLUM = {
     "antrenor.html": "kulup", "salonlar.html": "kulup",
     "takim.html": "takim", "kadro.html": "takim", "oyuncu.html": "takim",
     "fikstur.html": "takim", "mac.html": "takim",
-    "galeri.html": "medya", "videolar.html": "medya", "haberler.html": "medya",
+    "galeri.html": "medya", "videolar.html": "medya", "haberler.html": "medya", "haber.html": "medya",
 }
 
 changed = 0

@@ -998,6 +998,13 @@ select.input {
 .ftr__design b { color: #fff; font-weight: 600; transition: color 160ms ease; }
 @media (hover: hover) and (pointer: fine) { .ftr__design:hover, .ftr__design:hover b { color: var(--green-bright) !important; } }
 
+/* Haber detayı */
+.post { max-width: 820px; }
+.post__meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; color: var(--ink-3); }
+.post__media { margin: 0 0 26px; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--sh-2); }
+.post__media img { width: 100%; height: auto; display: block; }
+.post__acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+
 /* Tıklanabilir maç satırı, kartlar */
 a.fx { display: grid; color: inherit; }
 a.scard, a.coach { display: block; color: inherit; }

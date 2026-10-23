@@ -55,8 +55,15 @@
      için .ph yer tutucusu (lacivert + soluk rozet) görünür. */
   function hasPhoto(code) { return PHOTOS.indexOf(code) > -1; }
   function igSrc(code, small) { return 'assets/instagram/' + (small ? '600/' : '') + code + '.jpg'; }
-  /** Gönderi bağlantısı: panelden girilen bağlantı, yoksa Instagram gönderisi */
-  function postLink(p) { return p.link || 'https://www.instagram.com/p/' + p.code + '/'; }
+  /** Haber detay sayfası */
+  function postLink(p) { return 'haber.html?id=' + encodeURIComponent(p.code); }
+  /** Dış bağlantı: panelden girilen bağlantı; yoksa yalnız Instagram gönderi kodu
+   *  olan (panelden eklenmemiş) haberlerde Instagram gönderisi, diğerlerinde boş */
+  function extLink(p) {
+    if (p.link) return p.link;
+    return /^[A-Za-z0-9_-]{10,12}$/.test(p.code) ? 'https://www.instagram.com/p/' + p.code + '/' : '';
+  }
+  function extLabel(url) { return /instagram\.com/.test(url) ? 'Instagram’da gör' : 'Bağlantıyı aç'; }
   /** Gönderi görseli: panelden yüklenen görsel; yerel Instagram arşivinde küçük sürüm (600/) */
   function postImgSrc(p, small) {
     if (p.image && !/^assets\/instagram\//.test(p.image)) return p.image;
@@ -207,12 +214,10 @@
 
   /* ------------------------------------------------------------- renderers */
 
-  /** Haber kartı — TOFAŞ kartı; Instagram gönderisine gider. */
+  /** Haber kartı — TOFAŞ kartı; haber sayfasına gider. */
   function newsCard(p, badge) {
     var a = el('a', 'card');
     a.href = postLink(p);
-    a.target = '_blank';
-    a.rel = 'noopener';
     a.innerHTML =
       '<div class="card__media ph">' +
       (badge ? '<span class="tag tag--blue card__badge">' + esc(badge) + '</span>' : '') +
@@ -429,12 +434,10 @@
   })();
 
   /** Galeri karesi — TOFAŞ albüm karesi. Fotoğrafı varsa lightbox'ta açılır,
-   *  yoksa Instagram gönderisine gider. */
+   *  yoksa haber sayfasına gider. */
   function photoTile(p, list) {
     var a = el('a', 'tile');
     a.href = postLink(p);
-    a.target = '_blank';
-    a.rel = 'noopener';
     a.innerHTML =
       '<div class="tile__media ph">' + postImg(p, p.title, true) + '</div>' +
       '<div class="tile__body"><h3 class="tile__title">' + esc(p.title) + '</h3>' +
@@ -475,7 +478,7 @@
           '<div class="slide__body">' +
           '<div class="slide__meta"><span class="tag">' + esc(CAT_LABEL[p.cat] || 'Haber') + '</span><span class="date">' + esc(fmtDate(p.date)) + '</span></div>' +
           '<h2 class="slide__title">' + esc(p.title) + '</h2>' +
-          '<a class="btn btn--onblue btn--sm" href="' + postLink(p) + '" target="_blank" rel="noopener">Instagram’da gör ' + ARROW + '</a>' +
+          '<a class="btn btn--onblue btn--sm" href="' + postLink(p) + '">Haberi oku ' + ARROW + '</a>' +
           '</div>';
         track.appendChild(d);
         var b = el('button', 'dot');
@@ -942,18 +945,39 @@
     var host = $('#videos');
     if (!host) return;
     sortedPosts().filter(function (p) { return p.type === 'video'; }).forEach(function (p) {
-      var a = el('a', 'tile');
-      a.href = postLink(p);
-      a.target = '_blank';
-      a.rel = 'noopener';
+      var a = el('a', 'tile'), ext = extLink(p);
+      a.href = ext || postLink(p);
+      if (ext) { a.target = '_blank'; a.rel = 'noopener'; }
       a.innerHTML =
         '<div class="tile__media ph">' + postImg(p, p.title, true) + '</div>' +
         '<div class="tile__play"><span><svg viewBox="0 0 16 16"><path d="M3 1.5 14 8 3 14.5z"/></svg></span></div>' +
         '<div class="tile__body"><h3 class="tile__title">' + esc(p.title) + '</h3>' +
-        '<div class="tile__meta">' + esc(fmtDate(p.date)) + ' · Instagram’da izle</div></div>';
+        '<div class="tile__meta">' + esc(fmtDate(p.date)) + (ext ? ' · ' + (/instagram\.com/.test(ext) ? 'Instagram’da izle' : 'İzle') : '') + '</div></div>';
       host.appendChild(a);
     });
     markReveal(host, '.tile');
+  }
+
+  /* ------------------------------------------------------------ page: post */
+
+  function pagePost() {
+    var posts = sortedPosts(), id = new URLSearchParams(location.search).get('id');
+    var p = posts.filter(function (x) { return x.code === id; })[0] || posts[0];
+    if (!p) return;
+    document.title = p.title + ' — TOFAŞ · DİBA Denizli';
+    $('#pt-crumb').textContent = p.title;
+    $('#pt-title').textContent = p.title;
+    $('#pt-meta').innerHTML = '<span class="tag tag--blue">' + esc(CAT_LABEL[p.cat] || 'Haber') + '</span><span class="date">' + esc(fmtDate(p.date)) + '</span>';
+    var media = $('#pt-media'), img = postImg(p, p.title, false, '');
+    if (img) media.innerHTML = img; else media.remove();
+    $('#pt-body').innerHTML = (p.text || '').split(/\n{2,}|\n/).filter(Boolean)
+      .map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('');
+    var ext = extLink(p);
+    if (ext) $('#pt-acts').insertAdjacentHTML('afterbegin',
+      '<a class="btn btn--primary btn--sm" href="' + esc(ext) + '" target="_blank" rel="noopener">' + extLabel(ext) + ' ' + ARROW + '</a>');
+    var rel = $('#pt-related');
+    posts.filter(function (x) { return x !== p; }).slice(0, 3).forEach(function (x) { rel.appendChild(newsCard(x)); });
+    markReveal(rel, '.card');
   }
 
   /* ------------------------------------------------------------ page: news */
@@ -1247,7 +1271,7 @@
       ({
         home: pageHome, team: pageTeam, roster: pageRoster, player: pagePlayer, match: pageMatch, fixtures: pageFixtures,
         coaches: pageCoaches, coach: pageCoach, gallery: pageGallery, videos: pageVideos, venues: pageVenues,
-        news: pageNews, register: pageRegister
+        news: pageNews, post: pagePost, register: pageRegister
       }[page] || function () {})();
     } catch (err) {
       console.error('[denizli-tofas] render error', err);
