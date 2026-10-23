@@ -48,3 +48,8 @@
 - [x] Yönetim paneli: https://ed1620.github.io/denizli-tofas-basketbol/panel/ (DİBA yönetici hesabıyla)
 - [ ] Ön kayıt formu ileride Supabase'e kaydedilebilir — şimdilik form WhatsApp mesajı açıyor
 - [ ] Fiat Typeface lisansı CC BY 4.0 kaynak gösterilmesini istiyor; footer'daki kredi kullanıcı isteğiyle kaldırıldı, kredi `assets/fonts/LICENSE-fiat.txt` ve README'de
+
+## Maç istatistikleri (24.10.2026)
+- [ ] `supabase/04_mac_istatistikleri.sql` SQL Editor'da çalıştırılacak (istatistik tablosu, U16 1. hafta skorları, A/B kadro ayrımı).
+- [ ] MUZAFFER BOZDEMİR (U16 B, #8): TBF kadro listesinde görünmüyor; doğum yılı girilecek.
+- [ ] Panelde istatistik girişi yok; şimdilik yeni maçların istatistikleri TBF'den SQL ile aktarılıyor.

@@ -172,6 +172,16 @@ window.SITE = {
 
   players: [
     {
+      "id": "muzaffer-bozdemir",
+      "name": "MUZAFFER BOZDEMİR",
+      "born": "",
+      "team": "u16b",
+      "number": "8",
+      "position": "",
+      "photo": "",
+      "bio": ""
+    },
+    {
       "id": "ali-deniz-ilkimen",
       "name": "ALİ DENİZ İLKİMEN",
       "born": 2014,
@@ -306,7 +316,7 @@ window.SITE = {
       "name": "AHMET TEKE",
       "born": 2011,
       "team": "u16a",
-      "number": "",
+      "number": "20",
       "position": "",
       "photo": "",
       "bio": ""
@@ -316,7 +326,7 @@ window.SITE = {
       "name": "AHMET EFE YILDIRAN",
       "born": 2011,
       "team": "u16a",
-      "number": "",
+      "number": "11",
       "position": "",
       "photo": "",
       "bio": ""
@@ -325,8 +335,8 @@ window.SITE = {
       "id": "ahmet-eren-tenekeci",
       "name": "AHMET EREN TENEKECİ",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "32",
       "position": "",
       "photo": "",
       "bio": ""
@@ -336,7 +346,7 @@ window.SITE = {
       "name": "ASIM YİĞİT GÜRLER",
       "born": 2012,
       "team": "u16a",
-      "number": "",
+      "number": "5",
       "position": "",
       "photo": "",
       "bio": ""
@@ -345,8 +355,8 @@ window.SITE = {
       "id": "egemen-erten",
       "name": "EGEMEN ERTEN",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "12",
       "position": "",
       "photo": "",
       "bio": ""
@@ -356,7 +366,7 @@ window.SITE = {
       "name": "EMİR CANSUZ",
       "born": 2012,
       "team": "u16a",
-      "number": "",
+      "number": "83",
       "position": "",
       "photo": "",
       "bio": ""
@@ -365,8 +375,8 @@ window.SITE = {
       "id": "ismail-aras-degirmenci",
       "name": "İSMAİL ARAS DEĞİRMENCİ",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "42",
       "position": "",
       "photo": "",
       "bio": ""
@@ -376,7 +386,7 @@ window.SITE = {
       "name": "KAYRA DEMİR ÖZDEMİR",
       "born": 2012,
       "team": "u16a",
-      "number": "",
+      "number": "0",
       "position": "",
       "photo": "",
       "bio": ""
@@ -385,8 +395,8 @@ window.SITE = {
       "id": "mehmet-cinar-kaya",
       "name": "MEHMET ÇINAR KAYA",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "45",
       "position": "",
       "photo": "",
       "bio": ""
@@ -396,7 +406,7 @@ window.SITE = {
       "name": "MERT ERCAN",
       "born": 2011,
       "team": "u16a",
-      "number": "",
+      "number": "19",
       "position": "",
       "photo": "",
       "bio": ""
@@ -405,8 +415,8 @@ window.SITE = {
       "id": "mustafa-eren-yagci",
       "name": "MUSTAFA EREN YAĞCI",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "24",
       "position": "",
       "photo": "",
       "bio": ""
@@ -416,7 +426,7 @@ window.SITE = {
       "name": "MUSTAFA MERT ÖNERİ",
       "born": 2011,
       "team": "u16a",
-      "number": "",
+      "number": "2",
       "position": "",
       "photo": "",
       "bio": ""
@@ -425,8 +435,8 @@ window.SITE = {
       "id": "mustafa-yigit-goven",
       "name": "MUSTAFA YİĞİT GÖVEN",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "21",
       "position": "",
       "photo": "",
       "bio": ""
@@ -436,7 +446,7 @@ window.SITE = {
       "name": "ÖMER METE GÖK",
       "born": 2011,
       "team": "u16a",
-      "number": "",
+      "number": "9",
       "position": "",
       "photo": "",
       "bio": ""
@@ -445,8 +455,8 @@ window.SITE = {
       "id": "resat-cinar-hilinc",
       "name": "REŞAT ÇINAR HILINÇ",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "14",
       "position": "",
       "photo": "",
       "bio": ""
@@ -456,7 +466,7 @@ window.SITE = {
       "name": "SALİH MERT YAVAŞ",
       "born": 2012,
       "team": "u16a",
-      "number": "",
+      "number": "23",
       "position": "",
       "photo": "",
       "bio": ""
@@ -466,7 +476,7 @@ window.SITE = {
       "name": "TALHA EFE ÇELİK",
       "born": 2011,
       "team": "u16a",
-      "number": "",
+      "number": "17",
       "position": "",
       "photo": "",
       "bio": ""
@@ -475,8 +485,8 @@ window.SITE = {
       "id": "tuncay-ege-bilgic",
       "name": "TUNCAY EGE BİLGİÇ",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "4",
       "position": "",
       "photo": "",
       "bio": ""
@@ -485,8 +495,8 @@ window.SITE = {
       "id": "umut-eren-ozbudak",
       "name": "UMUT EREN ÖZBUDAK",
       "born": 2012,
-      "team": "u16a",
-      "number": "",
+      "team": "u16b",
+      "number": "88",
       "position": "",
       "photo": "",
       "bio": ""
@@ -496,7 +506,7 @@ window.SITE = {
       "name": "ARAS KÖKNAR",
       "born": 2012,
       "team": "u16b",
-      "number": "",
+      "number": "99",
       "position": "",
       "photo": "",
       "bio": ""
@@ -550,7 +560,10 @@ window.SITE = {
         "name": "Servergazi Basketbol (A)",
         "logo": "servergazi"
       },
-      "score": "",
+      "score": "27-108",
+      "status": "completed",
+      "quarters": {"ours": [6, 4, 8, 9], "theirs": [33, 24, 18, 33]},
+      "tbf": "https://tbf.org.tr/ligler/22620/mac-detay/351720",
       "venue": "engelsiz"
     },
     {
@@ -567,7 +580,10 @@ window.SITE = {
         "name": "Pamukkale Akademi",
         "logo": "pamukkale-akademi"
       },
-      "score": "",
+      "score": "49-99",
+      "status": "completed",
+      "quarters": {"ours": [9, 23, 7, 10], "theirs": [28, 34, 18, 19]},
+      "tbf": "https://tbf.org.tr/ligler/22620/mac-detay/351721",
       "venue": "engelsiz"
     },
     {
@@ -1065,6 +1081,31 @@ window.SITE = {
   ],
 
   /* SSS — cevapların bir kısmı kulüple doğrulanacak (YAPILACAKLAR.md) */
+  /* Maç istatistikleri — TBF maç kâğıtları (oyuncu başına). */
+  stats: [
+    {"match": "ami579", "player": "mustafa-mert-oneri", "name": "Mustafa Mert Öneri", "no": "2", "gs": true, "cap": true, "min": "20:41", "pts": 1, "fgm": 0, "fga": 6, "p2m": 0, "p2a": 5, "p3m": 0, "p3a": 1, "ftm": 1, "fta": 2, "oreb": 0, "dreb": 2, "reb": 2, "ast": 0, "tov": 4, "stl": 1, "blk": 0, "pf": 0, "fd": 1, "pm": -35, "eff": -7},
+    {"match": "ami579", "player": "asim-yigit-gurler", "name": "Asım Yiğit Gürler", "no": "5", "gs": true, "cap": false, "min": "30:58", "pts": 3, "fgm": 1, "fga": 3, "p2m": 1, "p2a": 2, "p3m": 0, "p3a": 1, "ftm": 1, "fta": 2, "oreb": 1, "dreb": 0, "reb": 1, "ast": 0, "tov": 3, "stl": 0, "blk": 0, "pf": 2, "fd": 1, "pm": -79, "eff": -2},
+    {"match": "ami579", "player": "omer-mete-gok", "name": "Ömer Mete Gök", "no": "9", "gs": true, "cap": false, "min": "28:41", "pts": 8, "fgm": 4, "fga": 10, "p2m": 4, "p2a": 9, "p3m": 0, "p3a": 1, "ftm": 0, "fta": 7, "oreb": 1, "dreb": 4, "reb": 5, "ast": 0, "tov": 1, "stl": 0, "blk": 0, "pf": 4, "fd": 8, "pm": -60, "eff": -1},
+    {"match": "ami579", "player": "ahmet-efe-yildiran", "name": "Ahmet Efe Yıldıran", "no": "11", "gs": true, "cap": false, "min": "13:11", "pts": 0, "fgm": 0, "fga": 1, "p2m": 0, "p2a": 1, "p3m": 0, "p3a": 0, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 1, "reb": 1, "ast": 0, "tov": 2, "stl": 0, "blk": 0, "pf": 2, "fd": 3, "pm": -23, "eff": -2},
+    {"match": "ami579", "player": "salih-mert-yavas", "name": "Salih Mert Yavaş", "no": "23", "gs": true, "cap": false, "min": "20:44", "pts": 0, "fgm": 0, "fga": 5, "p2m": 0, "p2a": 4, "p3m": 0, "p3a": 1, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 1, "reb": 1, "ast": 0, "tov": 3, "stl": 0, "blk": 0, "pf": 0, "fd": 1, "pm": -50, "eff": -7},
+    {"match": "ami579", "player": "kayra-demir-ozdemir", "name": "Kayra Demir Özdemir", "no": "00", "gs": false, "cap": false, "min": "25:30", "pts": 7, "fgm": 2, "fga": 3, "p2m": 1, "p2a": 2, "p3m": 1, "p3a": 1, "ftm": 2, "fta": 6, "oreb": 0, "dreb": 1, "reb": 1, "ast": 0, "tov": 3, "stl": 1, "blk": 0, "pf": 0, "fd": 4, "pm": -48, "eff": 1},
+    {"match": "ami579", "player": "talha-efe-celik", "name": "Talha Efe Çelik", "no": "17", "gs": false, "cap": false, "min": "18:49", "pts": 2, "fgm": 1, "fga": 1, "p2m": 1, "p2a": 1, "p3m": 0, "p3a": 0, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 1, "reb": 1, "ast": 1, "tov": 1, "stl": 0, "blk": 0, "pf": 1, "fd": 0, "pm": -36, "eff": 3},
+    {"match": "ami579", "player": "mert-ercan", "name": "Mert Ercan", "no": "19", "gs": false, "cap": false, "min": "8:27", "pts": 0, "fgm": 0, "fga": 1, "p2m": 0, "p2a": 1, "p3m": 0, "p3a": 0, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 0, "reb": 0, "ast": 0, "tov": 0, "stl": 0, "blk": 0, "pf": 1, "fd": 0, "pm": -10, "eff": -1},
+    {"match": "ami579", "player": "ahmet-teke", "name": "Ahmet Teke", "no": "20", "gs": false, "cap": false, "min": "8:43", "pts": 0, "fgm": 0, "fga": 0, "p2m": 0, "p2a": 0, "p3m": 0, "p3a": 0, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 0, "reb": 0, "ast": 0, "tov": 0, "stl": 0, "blk": 0, "pf": 1, "fd": 0, "pm": -9, "eff": 0},
+    {"match": "ami579", "player": "emir-cansuz", "name": "Emir Cansuz", "no": "83", "gs": false, "cap": false, "min": "24:16", "pts": 6, "fgm": 3, "fga": 6, "p2m": 3, "p2a": 5, "p3m": 0, "p3a": 1, "ftm": 0, "fta": 2, "oreb": 1, "dreb": 2, "reb": 3, "ast": 0, "tov": 5, "stl": 0, "blk": 0, "pf": 0, "fd": 1, "pm": -55, "eff": -1},
+    {"match": "ami580", "player": "muzaffer-bozdemir", "name": "Muzaffer Bozdemir", "no": "8", "gs": true, "cap": false, "min": "30:43", "pts": 13, "fgm": 6, "fga": 16, "p2m": 5, "p2a": 12, "p3m": 1, "p3a": 4, "ftm": 0, "fta": 2, "oreb": 0, "dreb": 4, "reb": 4, "ast": 0, "tov": 9, "stl": 0, "blk": 0, "pf": 1, "fd": 2, "pm": -44, "eff": -4},
+    {"match": "ami580", "player": "egemen-erten", "name": "Egemen Erten", "no": "12", "gs": true, "cap": true, "min": "34:49", "pts": 4, "fgm": 2, "fga": 10, "p2m": 2, "p2a": 6, "p3m": 0, "p3a": 4, "ftm": 0, "fta": 2, "oreb": 2, "dreb": 3, "reb": 5, "ast": 1, "tov": 3, "stl": 1, "blk": 0, "pf": 3, "fd": 3, "pm": -44, "eff": -2},
+    {"match": "ami580", "player": "mustafa-yigit-goven", "name": "Mustafa Yiğit Göven", "no": "21", "gs": true, "cap": false, "min": "12:32", "pts": 3, "fgm": 1, "fga": 2, "p2m": 0, "p2a": 0, "p3m": 1, "p3a": 2, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 1, "reb": 1, "ast": 1, "tov": 1, "stl": 0, "blk": 0, "pf": 2, "fd": 0, "pm": -19, "eff": 3},
+    {"match": "ami580", "player": "umut-eren-ozbudak", "name": "Umut Eren Özbudak", "no": "88", "gs": true, "cap": false, "min": "34:49", "pts": 12, "fgm": 4, "fga": 10, "p2m": 4, "p2a": 8, "p3m": 0, "p3a": 2, "ftm": 4, "fta": 13, "oreb": 1, "dreb": 7, "reb": 8, "ast": 0, "tov": 4, "stl": 0, "blk": 0, "pf": 3, "fd": 8, "pm": -42, "eff": 1},
+    {"match": "ami580", "player": "aras-koknar", "name": "Aras Köknar", "no": "99", "gs": true, "cap": false, "min": "23:31", "pts": 9, "fgm": 3, "fga": 6, "p2m": 1, "p2a": 1, "p3m": 2, "p3a": 5, "ftm": 1, "fta": 4, "oreb": 0, "dreb": 2, "reb": 2, "ast": 0, "tov": 0, "stl": 1, "blk": 0, "pf": 3, "fd": 3, "pm": -26, "eff": 6},
+    {"match": "ami580", "player": "tuncay-ege-bilgic", "name": "Tuncay Ege Bilgiç", "no": "4", "gs": false, "cap": false, "min": "23:21", "pts": 5, "fgm": 2, "fga": 5, "p2m": 2, "p2a": 3, "p3m": 0, "p3a": 2, "ftm": 1, "fta": 3, "oreb": 0, "dreb": 1, "reb": 1, "ast": 0, "tov": 1, "stl": 0, "blk": 0, "pf": 4, "fd": 1, "pm": -29, "eff": 0},
+    {"match": "ami580", "player": "resat-cinar-hilinc", "name": "Reşat Çınar Hılınç", "no": "14", "gs": false, "cap": false, "min": "8:47", "pts": 2, "fgm": 1, "fga": 2, "p2m": 1, "p2a": 2, "p3m": 0, "p3a": 0, "ftm": 0, "fta": 2, "oreb": 1, "dreb": 0, "reb": 1, "ast": 0, "tov": 2, "stl": 0, "blk": 0, "pf": 1, "fd": 1, "pm": -11, "eff": -2},
+    {"match": "ami580", "player": "mustafa-eren-yagci", "name": "Mustafa Eren Yağcı", "no": "24", "gs": false, "cap": false, "min": "15:20", "pts": 0, "fgm": 0, "fga": 2, "p2m": 0, "p2a": 2, "p3m": 0, "p3a": 0, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 5, "reb": 5, "ast": 0, "tov": 2, "stl": 0, "blk": 0, "pf": 0, "fd": 0, "pm": -18, "eff": 1},
+    {"match": "ami580", "player": "ahmet-eren-tenekeci", "name": "Ahmet Eren Tenekeci", "no": "32", "gs": false, "cap": false, "min": "0:00", "pts": 0, "fgm": 0, "fga": 0, "p2m": 0, "p2a": 0, "p3m": 0, "p3a": 0, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 0, "reb": 0, "ast": 0, "tov": 0, "stl": 0, "blk": 0, "pf": 0, "fd": 0, "pm": 0, "eff": 0},
+    {"match": "ami580", "player": "ismail-aras-degirmenci", "name": "İsmail Aras Değirmenci", "no": "42", "gs": false, "cap": false, "min": "9:28", "pts": 1, "fgm": 0, "fga": 2, "p2m": 0, "p2a": 2, "p3m": 0, "p3a": 0, "ftm": 1, "fta": 2, "oreb": 0, "dreb": 2, "reb": 2, "ast": 0, "tov": 2, "stl": 0, "blk": 0, "pf": 0, "fd": 1, "pm": -9, "eff": -2},
+    {"match": "ami580", "player": "mehmet-cinar-kaya", "name": "Mehmet Çınar Kaya", "no": "45", "gs": false, "cap": false, "min": "6:40", "pts": 0, "fgm": 0, "fga": 1, "p2m": 0, "p2a": 0, "p3m": 0, "p3a": 1, "ftm": 0, "fta": 0, "oreb": 0, "dreb": 0, "reb": 0, "ast": 0, "tov": 1, "stl": 0, "blk": 0, "pf": 0, "fd": 0, "pm": -8, "eff": -2}
+  ],
+
   faq: [
     { q: 'Kaç yaşından itibaren başlayabilir?',
       a: '6 yaşından itibaren. En küçükler Kids (mini basketbol) grubunda başlıyor; 16 yaşa kadar yaşa göre gruplarımız var.' },

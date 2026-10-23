@@ -281,6 +281,7 @@
       return {
         id: m.id, no: m.no, comp: m.comp, week: m.week, date: m.date, time: m.time,
         home: h, away: a, score: m.score || '', venue: m.venue, status: m.status || 'scheduled',
+        quarters: m.quarters || null, tbf: m.tbf || '',
         teams: [h.team, a.team].filter(Boolean)
       };
     }).sort(function (a, b) { return dateKey(a.date, a.time) - dateKey(b.date, b.time); });
@@ -672,6 +673,99 @@
     render('ad');
   }
 
+  /* ------------------------------------------------------ maç istatistikleri */
+
+  function statsOfMatch(id) { return (S.stats || []).filter(function (x) { return x.match === id; }); }
+  function statsOfPlayer(id) { return (S.stats || []).filter(function (x) { return x.player === id; }); }
+  function secs(min) { var p = String(min || '0:00').split(':'); return (+p[0] || 0) * 60 + (+p[1] || 0); }
+  function mmss(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function pct(m, a) { return a ? Math.round(m / a * 100) + '%' : '–'; }
+  function made(m, a) { return m + '/' + a; }
+  var STAT_SUM = ['pts', 'fgm', 'fga', 'p2m', 'p2a', 'p3m', 'p3a', 'ftm', 'fta', 'oreb', 'dreb', 'reb', 'ast', 'tov', 'stl', 'blk', 'pf', 'fd', 'eff'];
+  function sumStats(rows) {
+    var t = { min: 0 };
+    STAT_SUM.forEach(function (k) { t[k] = 0; });
+    rows.forEach(function (r) { t.min += secs(r.min); STAT_SUM.forEach(function (k) { t[k] += +r[k] || 0; }); });
+    return t;
+  }
+  var BOX_HEAD = '<th>Dk</th><th>Sayı</th><th>2 Sayı</th><th>3 Sayı</th><th>Serbest</th><th title="Hücum ribaundu">HR</th><th title="Savunma ribaundu">SR</th><th>Rib</th><th>Ast</th><th title="Top çalma">TÇ</th><th title="Top kaybı">TK</th><th>Blok</th><th>Faul</th>';
+  function boxCells(r, min) {
+    return '<td>' + esc(min) + '</td><td class="pts">' + r.pts + '</td>' +
+      '<td>' + made(r.p2m, r.p2a) + '</td><td>' + made(r.p3m, r.p3a) + '</td><td>' + made(r.ftm, r.fta) + '</td>' +
+      '<td>' + r.oreb + '</td><td>' + r.dreb + '</td><td>' + r.reb + '</td><td>' + r.ast + '</td><td>' + r.stl + '</td><td>' + r.tov + '</td><td>' + r.blk + '</td><td>' + r.pf + '</td>';
+  }
+  function statPlayerLink(r) {
+    var p = playerById(r.player), nm = esc(personName(r.name));
+    return p ? '<a href="oyuncu.html?id=' + encodeURIComponent(p.id) + '">' + nm + '</a>' : nm;
+  }
+
+  /** Maç sayfası: periyotlar, liderler ve oyuncu istatistikleri */
+  function matchStats(m) {
+    var sec = $('#mc-statsec');
+    if (!sec) return;
+    var rows = statsOfMatch(m.id);
+    if (!m.quarters && !rows.length) { sec.remove(); return; }
+    var pv = perspective(m), us = pv.us, opp = pv.opp;
+    var q = $('#mc-quarters');
+    if (m.quarters && m.quarters.ours) {
+      var head = m.quarters.ours.map(function (_, i) { return '<th>' + (i < 4 ? (i + 1) + '. Periyot' : 'Uzatma') + '</th>'; }).join('');
+      var line = function (side, arr) {
+        var tot = arr.reduce(function (a, b) { return a + b; }, 0);
+        return '<tr><td class="team">' + esc(side.name) + '</td>' + arr.map(function (x) { return '<td>' + x + '</td>'; }).join('') + '<td class="pts">' + tot + '</td></tr>';
+      };
+      var a = line(us, m.quarters.ours), b = line(opp, m.quarters.theirs);
+      q.innerHTML = '<table class="standings boxscore boxscore--q"><thead><tr><th>Takım</th>' + head + '<th>Toplam</th></tr></thead><tbody>' +
+        (pv.home ? a + b : b + a) + '</tbody></table>';
+    } else q.remove();
+
+    if (!rows.length) { $('#mc-box').remove(); $('#mc-leaders').remove(); $('#mc-boxhead').remove(); }
+    else {
+      var played = rows.filter(function (r) { return secs(r.min) > 0; });
+      var lead = $('#mc-leaders');
+      [['pts', 'Sayı'], ['reb', 'Ribaund'], ['ast', 'Asist'], ['eff', 'Verimlilik']].forEach(function (k) {
+        var best = played.slice().sort(function (x, y) { return y[k[0]] - x[k[0]]; })[0];
+        if (!best) return;
+        lead.appendChild(el('div', 'stat', '<b>' + best[k[0]] + '</b><span>' + esc(k[1]) + ' lideri</span><em>' + statPlayerLink(best) + '</em>'));
+      });
+      var t = sumStats(rows);
+      $('#mc-box').innerHTML = '<table class="standings boxscore"><thead><tr><th>No</th><th>Oyuncu</th>' + BOX_HEAD + '<th>+/-</th><th title="Verimlilik">VP</th></tr></thead><tbody>' +
+        rows.map(function (r) {
+          var dnp = secs(r.min) === 0;
+          return '<tr' + (dnp ? ' class="dnp"' : '') + '><td class="pos">' + esc(r.no) + '</td><td class="team">' + statPlayerLink(r) +
+            (r.gs ? ' <small title="İlk beş">İ5</small>' : '') + (r.cap ? ' <small title="Kaptan">K</small>' : '') + '</td>' +
+            (dnp ? '<td colspan="15" class="muted">Süre almadı</td>' : boxCells(r, r.min) + '<td>' + (r.pm > 0 ? '+' : '') + r.pm + '</td><td>' + r.eff + '</td>') + '</tr>';
+        }).join('') +
+        '</tbody><tfoot><tr><td></td><td class="team">Toplam</td>' + boxCells(t, mmss(t.min)) + '<td></td><td>' + t.eff + '</td></tr>' +
+        '<tr class="pcts"><td></td><td class="team">Yüzde</td><td></td><td></td><td>' + pct(t.p2m, t.p2a) + '</td><td>' + pct(t.p3m, t.p3a) + '</td><td>' + pct(t.ftm, t.fta) + '</td><td colspan="10"></td></tr></tfoot></table>';
+      markReveal(lead, '.stat');
+    }
+    var src = $('#mc-tbf');
+    if (m.tbf) src.href = m.tbf; else src.remove();
+  }
+
+  /** Oyuncu sayfası: sezon ortalamaları ve maç maç istatistikler */
+  function playerStats(p) {
+    var sec = $('#pl-statsec');
+    if (!sec) return;
+    var rows = statsOfPlayer(p.id).map(function (r) { return { r: r, m: matchById(r.match) }; }).filter(function (x) { return x.m; })
+      .sort(function (a, b) { return dateKey(a.m.date, a.m.time) - dateKey(b.m.date, b.m.time); });
+    var played = rows.filter(function (x) { return secs(x.r.min) > 0; });
+    if (!played.length) { sec.remove(); return; }
+    var t = sumStats(played.map(function (x) { return x.r; })), n = played.length;
+    var avg = function (v) { return (v / n).toFixed(1).replace('.', ','); };
+    var box = $('#pl-avg');
+    [[n, 'Maç'], [mmss(t.min / n), 'Dakika ort.'], [avg(t.pts), 'Sayı ort.'], [avg(t.reb), 'Ribaund ort.'], [avg(t.ast), 'Asist ort.'], [avg(t.eff), 'Verimlilik ort.']]
+      .forEach(function (f) { box.appendChild(el('div', 'stat', '<b style="font-size:24px">' + esc(f[0]) + '</b><span>' + esc(f[1]) + '</span>')); });
+    markReveal(box, '.stat');
+    $('#pl-log').innerHTML = '<table class="standings boxscore"><thead><tr><th>Tarih</th><th>Rakip</th><th>Sonuç</th>' + BOX_HEAD + '<th>VP</th></tr></thead><tbody>' +
+      rows.map(function (x) {
+        var pv = perspective(x.m, p.team), r = x.r, dnp = secs(r.min) === 0;
+        var res = pv.res ? '<span class="' + (pv.res.win ? 'win' : 'loss') + '">' + (pv.res.win ? 'G' : 'M') + '</span> ' + pv.res.mine + '-' + pv.res.theirs : '–';
+        return '<tr' + (dnp ? ' class="dnp"' : '') + '><td class="pos">' + esc(x.m.date) + '</td><td class="team"><a href="mac.html?id=' + encodeURIComponent(x.m.id) + '">' + (pv.home ? '' : '@ ') + esc(pv.opp.name) + '</a></td><td>' + res + '</td>' +
+          (dnp ? '<td colspan="14" class="muted">Süre almadı</td>' : boxCells(r, r.min) + '<td>' + r.eff + '</td>') + '</tr>';
+      }).join('') + '</tbody></table>';
+  }
+
   /* ---------------------------------------------------------- page: player */
 
   function pagePlayer() {
@@ -688,7 +782,7 @@
       ? '<img src="' + esc(p.photo) + '" alt="' + esc(personName(p.name)) + '">'
       : '<div class="pcard__ghost">' + esc(initials(p.name)) + '</div>';
     var facts = $('#pl-facts');
-    [['Doğum yılı', p.born], ['Takım', t.name], ['Lig', t.league || '—'], ['Forma no', p.number || '—']]
+    [['Doğum yılı', p.born || '—'], ['Takım', t.name], ['Lig', t.league || '—'], ['Forma no', p.number || '—']]
       .forEach(function (f) { facts.appendChild(el('div', 'stat', '<b style="font-size:21px">' + esc(f[1]) + '</b><span>' + esc(f[0]) + '</span>')); });
     markReveal(facts, '.stat');
     var bio = $('#pl-bio');
@@ -699,6 +793,7 @@
     playersOf(t.id).filter(function (x) { return x.id !== p.id; }).slice(0, 6).forEach(function (x) { others.appendChild(playerCard(x)); });
     markReveal(others, '.pcard');
     $('#pl-all').href = 'kadro.html?id=' + t.id;
+    playerStats(p);
   }
 
   /* ----------------------------------------------------------- page: match */
@@ -742,6 +837,7 @@
     var after = same.filter(function (x) { return dateKey(x.date, x.time) >= dateKey(m.date, m.time); }).slice(0, 3);
     (after.length ? after : same.slice(-3)).forEach(function (x) { rel.appendChild(matchRow(x, own)); });
     markReveal(rel, '.game');
+    matchStats(m);
   }
 
   /* ------------------------------------------------------- Excel (.xlsx) */
@@ -1131,8 +1227,11 @@
     web_coaches: '&is_active=eq.true&order=sort,name',
     web_matches: '&order=match_date,match_time',
     web_posts: '&is_published=eq.true&order=post_date.desc',
-    web_faq: '&is_active=eq.true&order=sort'
+    web_faq: '&is_active=eq.true&order=sort',
+    web_match_stats: '&order=match_id,sort'
   };
+  /* Bu tablolar okunamazsa (ör. henüz oluşturulmadıysa) site yine canlı veriyle açılır */
+  var OPTIONAL_TABLES = { web_match_stats: true };
 
   function fetchTable(t) {
     return fetch(CFG.url + '/rest/v1/' + t + '?select=*' + REMOTE_TABLES[t], {
@@ -1140,6 +1239,9 @@
     }).then(function (r) {
       if (!r.ok) throw new Error(t + ' ' + r.status);
       return r.json();
+    }).catch(function (e) {
+      if (OPTIONAL_TABLES[t]) return [];
+      throw e;
     });
   }
   function isoToTr(d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ''); return m ? m[3] + '.' + m[2] + '.' + m[1] : ''; }
@@ -1170,6 +1272,7 @@
       return {
         id: m.id, no: m.code || '', comp: m.competition || '', week: m.week || '', date: isoToTr(m.match_date), time: hhmm(m.match_time),
         home: m.is_home ? ours : other, away: m.is_home ? other : ours, venue: m.venue_id, status: m.status,
+        quarters: m.quarters || null, tbf: m.tbf_url || '',
         score: scored ? (m.is_home ? m.our_score + '-' + m.their_score : m.their_score + '-' + m.our_score) : ''
       };
     });
@@ -1195,7 +1298,12 @@
         return { code: p.id, date: isoToTr(p.post_date), type: p.type, cat: p.cat, title: p.title, text: p.body || '', groups: p.groups || [],
           via: p.via || '', image: p.image_url || '', link: p.link_url || '' };
       }),
-      faq: r.web_faq.map(function (f) { return { q: f.question, a: f.answer || '' }; })
+      faq: r.web_faq.map(function (f) { return { q: f.question, a: f.answer || '' }; }),
+      stats: r.web_match_stats.map(function (x) {
+        return { match: x.match_id, player: x.player_id, name: x.player_name, no: x.jersey || '', gs: x.starter, cap: x.captain, min: x.minutes || '0:00',
+          pts: x.pts, fgm: x.fgm, fga: x.fga, p2m: x.p2m, p2a: x.p2a, p3m: x.p3m, p3a: x.p3a, ftm: x.ftm, fta: x.fta,
+          oreb: x.oreb, dreb: x.dreb, reb: x.reb, ast: x.ast, tov: x.tov, stl: x.stl, blk: x.blk, pf: x.pf, fd: x.fd, pm: x.plus_minus, eff: x.eff };
+      })
     };
   }
 

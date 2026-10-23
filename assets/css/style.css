@@ -998,6 +998,30 @@ select.input {
 .ftr__design b { color: #fff; font-weight: 600; transition: color 160ms ease; }
 @media (hover: hover) and (pointer: fine) { .ftr__design:hover, .ftr__design:hover b { color: var(--green-bright) !important; } }
 
+/* Maç istatistikleri (TBF maç kâğıdı) */
+table.boxscore { min-width: 900px; }
+table.boxscore th, table.boxscore td { text-align: center; padding: 10px 9px; }
+table.boxscore th:nth-child(2), table.boxscore td.team { text-align: left; }
+table.boxscore td.team a { color: var(--navy); }
+table.boxscore td.team small { font-size: 9.5px; font-weight: 800; letter-spacing: 0.06em; color: var(--green); margin-left: 4px; }
+table.boxscore td.pts { font-size: 15px; }
+table.boxscore td.pos { width: 44px; }
+table.boxscore tr.dnp td { color: var(--ink-3); }
+table.boxscore td.muted { text-align: left; font-style: italic; color: var(--ink-3); }
+table.boxscore tfoot td { border-top: 2px solid var(--line-strong); font-weight: 800; color: var(--navy); background: var(--bg-softer); }
+table.boxscore tfoot tr.pcts td { border-top: 0; font-weight: 600; color: var(--ink-2); }
+table.boxscore--q { min-width: 520px; }
+table.boxscore--q th:first-child { text-align: left; }
+table.boxscore .win { color: var(--green); font-weight: 800; }
+table.boxscore .loss { color: #b3243a; font-weight: 800; }
+@media (hover: hover) and (pointer: fine) { table.boxscore td.team a:hover { color: var(--blue); } }
+.boxlead { margin: 22px 0 6px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+#pl-avg.boxlead { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 0; }
+.boxlead .stat em { display: block; margin-top: 6px; font-style: normal; font-size: 12.5px; font-weight: 700; color: var(--navy); }
+.boxtitle { font-size: 17px; color: var(--navy); margin: 26px 0 12px; }
+.boxnote { margin: 12px 0 0; font-size: 12px; color: var(--ink-3); }
+@media (max-width: 900px) { .boxlead, #pl-avg.boxlead { grid-template-columns: repeat(2, minmax(0, 1fr)); } #pl-avg.boxlead { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
 /* Haber detayı */
 .post { max-width: 820px; }
 .post__meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; color: var(--ink-3); }
