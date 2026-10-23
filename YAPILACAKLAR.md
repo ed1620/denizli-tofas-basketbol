@@ -55,4 +55,4 @@
 - [ ] Panelde istatistik girişi yok; şimdilik yeni maçların istatistikleri TBF'den SQL ile aktarılıyor.
 - [ ] `supabase/05_u14_kadro.sql` SQL Editor'da çalıştırılacak (U14'e ARAS GÜÇLÜ ve UMUT ADAR ÖZDEMİR, Muzaffer'in doğum yılı).
 - [ ] TBF'de fotoğrafı olmayanlar: AHMET TEKE (U16 A), ARDA TURHAN ve TUNA KARGI (U14).
-- [ ] Oyuncu fotoğrafları (TBF, 32 sporcu) yalnız yerelde: `assets/players/` + `data/yerel.js` git dışı. Veli onayı alınınca panelden yüklenecek.
+- [ ] Oyuncu fotoğrafları kaldırıldı (bilgisayardan da silindi). Veli onayı alınınca panelden yüklenecek; yerelde göstermek için `assets/players/` + `data/yerel.js` (git dışı) kullanılabilir.
