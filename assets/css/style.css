@@ -1079,9 +1079,17 @@ table.roster-table td.team a { color: var(--navy); }
    Çeki düzen — header hizası, maç kartı, takım sayfası, kadro, TBF bandı, açılış
    ========================================================================== */
 
-/* Ana sayfa hero: ön kayıt paneli kalktı, slider tam genişlik */
+/* Ana sayfa hero: ön kayıt paneli kalktı, slider ekranın tam genişliğinde;
+   yazı ve noktalar sayfa içeriğiyle aynı hizada kalır */
+.hero--full .hero__in { max-width: none; padding: 0; }
 .hero--full .hero__grid { grid-template-columns: 1fr; }
 .hero--full .slider__track { aspect-ratio: 21 / 9; }
+.hero--full .slide img { object-position: center 30%; }
+@media (min-width: 901px) {
+  .hero--full .slider__track { max-height: calc(100vh - 140px); min-height: 440px; }
+  .hero--full .slide__body { padding-left: max(32px, calc((100vw - var(--page)) / 2 + var(--gutter))); padding-bottom: 40px; }
+  .hero--full .slider__nav { right: max(32px, calc((100vw - var(--page)) / 2 + var(--gutter))); }
+}
 .hero--full .slide__title { font-size: clamp(22px, 3vw, 38px); }
 @media (max-width: 900px) { .hero--full .slider__track { aspect-ratio: 16 / 9; } }
 @media (max-width: 620px) { .hero--full .slider__track { aspect-ratio: 4 / 5; } }
