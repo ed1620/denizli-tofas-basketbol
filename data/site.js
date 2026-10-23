@@ -172,9 +172,29 @@ window.SITE = {
 
   players: [
     {
+      "id": "aras-guclu",
+      "name": "ARAS GÜÇLÜ",
+      "born": 2014,
+      "team": "u14",
+      "number": "",
+      "position": "",
+      "photo": "",
+      "bio": ""
+    },
+    {
+      "id": "umut-adar-ozdemir",
+      "name": "UMUT ADAR ÖZDEMİR",
+      "born": 2014,
+      "team": "u14",
+      "number": "",
+      "position": "",
+      "photo": "",
+      "bio": ""
+    },
+    {
       "id": "muzaffer-bozdemir",
       "name": "MUZAFFER BOZDEMİR",
-      "born": "",
+      "born": 2014,
       "team": "u16b",
       "number": "8",
       "position": "",
@@ -244,16 +264,6 @@ window.SITE = {
     {
       "id": "muammer-ruzgar-caliskan",
       "name": "MUAMMER RÜZGAR ÇALIŞKAN",
-      "born": 2014,
-      "team": "u14",
-      "number": "",
-      "position": "",
-      "photo": "",
-      "bio": ""
-    },
-    {
-      "id": "muzaffer-bozdemir",
-      "name": "MUZAFFER BOZDEMİR",
       "born": 2014,
       "team": "u14",
       "number": "",

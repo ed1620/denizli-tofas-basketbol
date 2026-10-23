@@ -1387,10 +1387,29 @@
     reveal();
   }
 
+  /* Oyuncu fotoğrafları veli onayı alınana kadar yalnız yerelde görünür:
+     data/yerel.js (git dışı) yalnız localhost'ta yüklenir, canlı sitede istenmez. */
+  function loadLocal() {
+    if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return Promise.resolve();
+    return new Promise(function (done) {
+      var s = document.createElement('script');
+      s.src = 'data/yerel.js?v=' + Date.now();
+      s.onload = s.onerror = function () { done(); };
+      document.head.appendChild(s);
+    });
+  }
+  function applyLocal() {
+    var f = window.YEREL_FOTOLAR;
+    if (!f) return;
+    (S.players || []).forEach(function (p) { if (!p.photo && f[p.id]) p.photo = f[p.id]; });
+  }
+
   function boot() {
     loader();
-    loadRemote().then(function (remote) {
+    Promise.all([loadRemote(), loadLocal()]).then(function (res) {
+      var remote = res[0];
       if (remote) { S = remote; SC = S.school; MATCHES = null; }
+      applyLocal();
       render();
     });
   }

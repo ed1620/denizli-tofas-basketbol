@@ -51,5 +51,8 @@
 
 ## Maç istatistikleri (24.10.2026)
 - [ ] `supabase/04_mac_istatistikleri.sql` SQL Editor'da çalıştırılacak (istatistik tablosu, U16 1. hafta skorları, A/B kadro ayrımı).
-- [ ] MUZAFFER BOZDEMİR (U16 B, #8): TBF kadro listesinde görünmüyor; doğum yılı girilecek.
+- [x] MUZAFFER BOZDEMİR: TBF'de U14 lisanslı, 23.04.2014 doğumlu (U16 B'de oynuyor).
 - [ ] Panelde istatistik girişi yok; şimdilik yeni maçların istatistikleri TBF'den SQL ile aktarılıyor.
+- [ ] `supabase/05_u14_kadro.sql` SQL Editor'da çalıştırılacak (U14'e ARAS GÜÇLÜ ve UMUT ADAR ÖZDEMİR, Muzaffer'in doğum yılı).
+- [ ] TBF'de fotoğrafı olmayanlar: AHMET TEKE (U16 A), ARDA TURHAN ve TUNA KARGI (U14).
+- [ ] Oyuncu fotoğrafları (TBF, 32 sporcu) yalnız yerelde: `assets/players/` + `data/yerel.js` git dışı. Veli onayı alınınca panelden yüklenecek.

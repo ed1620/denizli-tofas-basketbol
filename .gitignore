@@ -7,3 +7,7 @@
 ozel/
 DENIZLI_TOFAS_WEB_SITESI.md
 Icon?
+
+# Oyuncu fotoğrafları yalnız yerelde görünür (veli onayı alınana kadar yayına girmez)
+assets/players/
+data/yerel.js
